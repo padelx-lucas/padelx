@@ -148,6 +148,8 @@ nav{background:var(--w);border-bottom:1px solid var(--border);position:sticky;to
 .pcard-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 60%,rgba(0,0,0,.04));pointer-events:none;}
 .pcard:hover .pcard-img-ico{transform:scale(1.08);}
 .pcard-img-ico{transition:transform .3s;display:block;}
+.pcard-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
+.pcard:hover .pcard-img img{transform:scale(1.04);}
 .pbadge{position:absolute;top:12px;left:12px;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:2px;padding:4px 10px;}
 .pbadge-new{background:var(--k);color:#fff;}
 .pbadge-sale{background:var(--r);color:#fff;}
@@ -513,7 +515,7 @@ footer{background:#050505;padding:60px 0 0;}
       <li><a href="#" class="sale">Soldes</a></li>
     </ul>
     <div class="nav-actions">
-      <button class="nav-btn" onclick="openLogin()">Admin</button>
+      <button class="nav-btn" onclick="openLogin()">Connexion</button>
       <button class="cart-btn" onclick="openCart()">
         🛒<span class="badge" id="cartBadge">0</span>
       </button>
@@ -671,7 +673,7 @@ footer{background:#050505;padding:60px 0 0;}
     </div>
     <div class="fcol"><div class="fcol-title">Boutique</div><ul><li><a href="#">Raquettes</a></li><li><a href="#">Balles</a></li><li><a href="#">Chaussures</a></li><li><a href="#">Tenues</a></li><li><a href="#">Sacs</a></li></ul></div>
     <div class="fcol"><div class="fcol-title">Infos</div><ul><li><a href="#">À propos</a></li><li><a href="#">Blog</a></li><li><a href="#">Guide tailles</a></li><li><a href="#">FAQ</a></li></ul></div>
-    <div class="fcol"><div class="fcol-title">Service</div><ul><li><a href="#">Livraison</a></li><li><a href="#">Retours</a></li><li><a href="#" onclick="openModal('contactModal');return false;">Contact</a></li><li><a href="#" onclick="openModal('mentionsModal');return false;">Mentions légales</a></li><li><a href="#" onclick="openModal('cgvModal');return false;">CGV</a></li><li><a href="#" onclick="openLogin();return false;" style="color:var(--r)">Admin ⚙</a></li></ul></div>
+    <div class="fcol"><div class="fcol-title">Service</div><ul><li><a href="#">Livraison</a></li><li><a href="#">Retours</a></li><li><a href="#" onclick="openModal('contactModal');return false;">Contact</a></li><li><a href="#" onclick="openModal('mentionsModal');return false;">Mentions légales</a></li><li><a href="#" onclick="openModal('cgvModal');return false;">CGV</a></li><li><a href="#" onclick="openLogin();return false;">Connexion</a></li></ul></div>
   </div>
   <div class="footer-bottom">
     <div class="footer-copy">© 2025 PADEL X — Tous droits réservés</div>
@@ -683,13 +685,12 @@ footer{background:#050505;padding:60px 0 0;}
 <div class="modal-bg" id="loginModal">
   <div class="modal">
     <button class="modal-x" onclick="closeModal('loginModal')">✕</button>
-    <div class="modal-label">Espace admin</div>
+    <div class="modal-label">Mon compte</div>
     <h2 class="modal-title">Connexion</h2>
-    <p class="modal-sub">Accès réservé à l'administrateur Padel X.</p>
-    <div class="mfield"><label>Email</label><input type="email" id="lEmail" placeholder="admin@padelx.fr"/></div>
+    <p class="modal-sub">Accède à ton espace personnel.</p>
+    <div class="mfield"><label>Email</label><input type="email" id="lEmail" placeholder="ton@email.com"/></div>
     <div class="mfield"><label>Mot de passe</label><input type="password" id="lPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/><div class="merr" id="lErr">Identifiants incorrects.</div></div>
     <button class="btn-full" onclick="doLogin()">Se connecter →</button>
-    <p class="modal-hint">Mot de passe par défaut : <strong>padelx2025</strong></p>
   </div>
 </div>
 
@@ -728,7 +729,20 @@ footer{background:#050505;padding:60px 0 0;}
         </select>
       </div>
     </div>
-    <div class="mfield"><label>Emoji du produit</label><input type="text" id="pEmoji" placeholder="🏓 👟 👕 🎒"/></div>
+    <div class="mfield">
+      <label>Image du produit</label>
+      <div id="imgPreviewWrap" style="display:none;margin-bottom:10px;position:relative;width:100%;aspect-ratio:1;max-height:180px;background:var(--g);display:flex;align-items:center;justify-content:center;overflow:hidden;">
+        <img id="imgPreview" src="" style="width:100%;height:180px;object-fit:cover;display:none;"/>
+        <span id="imgPreviewIco" style="font-size:48px;"></span>
+        <button onclick="clearImg()" style="position:absolute;top:6px;right:6px;background:var(--r);color:#fff;border:none;width:24px;height:24px;font-size:11px;cursor:pointer;">✕</button>
+      </div>
+      <input type="file" id="pImgFile" accept="image/*" onchange="previewImg(this)" style="display:none"/>
+      <div style="display:flex;gap:8px;">
+        <button type="button" onclick="document.getElementById('pImgFile').click()" style="flex:1;background:var(--g);border:1.5px dashed var(--border);padding:12px;font-size:12px;letter-spacing:1px;cursor:pointer;transition:.2s;" onmouseover="this.style.borderColor='#0a0a0a'" onmouseout="this.style.borderColor='var(--border)'">📁 Choisir une image</button>
+      </div>
+      <input type="hidden" id="pImgUrl" value=""/>
+    </div>
+    <div class="mfield"><label>Ou emoji à la place (si pas d'image)</label><input type="text" id="pEmoji" placeholder="🏓 👟 👕 🎒"/></div>
     <div class="merr" id="pErr">Remplis les champs obligatoires.</div>
     <button class="btn-full" onclick="saveProd()">Enregistrer →</button>
   </div>
@@ -847,7 +861,7 @@ function renderProds() {
         <button class="padm padm-e" onclick="editProd('${p.id}')" title="Modifier">✏</button>
         <button class="padm padm-d" onclick="delProd('${p.id}')" title="Supprimer">✕</button>
       </div>
-      <div class="pcard-img"><span class="pcard-img-ico">${p.emoji || EMOJIS[p.category] || '📦'}</span></div>
+      <div class="pcard-img">${p.image_url ? `<img src="${p.image_url}" alt="${p.name}"/>` : `<span class="pcard-img-ico">${p.emoji || EMOJIS[p.category] || '📦'}</span>`}</div>
       <div class="pcard-body">
         <div class="pcard-brand">${p.brand.toUpperCase()}</div>
         <div class="pcard-name">${p.name}</div>
@@ -872,6 +886,27 @@ function filter(cat) {
   renderProds();
 }
 
+// ══ IMAGE UPLOAD ══
+function previewImg(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('imgPreview').src = e.target.result;
+    document.getElementById('imgPreview').style.display = 'block';
+    document.getElementById('imgPreviewIco').style.display = 'none';
+    document.getElementById('imgPreviewWrap').style.display = 'flex';
+    document.getElementById('pImgUrl').value = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function clearImg() {
+  document.getElementById('pImgFile').value = '';
+  document.getElementById('imgPreview').src = '';
+  document.getElementById('imgPreview').style.display = 'none';
+  document.getElementById('imgPreviewWrap').style.display = 'none';
+  document.getElementById('pImgUrl').value = '';
+}
+
 // ══ CRUD ══
 function openAddProd() {
   editId = null;
@@ -881,6 +916,7 @@ function openAddProd() {
   document.getElementById('pCat').value = 'Raquettes';
   document.getElementById('pBadge').value = '';
   document.getElementById('pErr').style.display = 'none';
+  clearImg();
   openModal('prodModal');
 }
 function editProd(id) {
@@ -897,6 +933,16 @@ function editProd(id) {
   document.getElementById('pBadge').value = p.badge || '';
   document.getElementById('pEmoji').value = p.emoji || '';
   document.getElementById('pErr').style.display = 'none';
+  // Image existante
+  if (p.image_url) {
+    document.getElementById('imgPreview').src = p.image_url;
+    document.getElementById('imgPreview').style.display = 'block';
+    document.getElementById('imgPreviewIco').style.display = 'none';
+    document.getElementById('imgPreviewWrap').style.display = 'flex';
+    document.getElementById('pImgUrl').value = p.image_url;
+  } else {
+    clearImg();
+  }
   openModal('prodModal');
 }
 async function saveProd() {
@@ -913,6 +959,7 @@ async function saveProd() {
     category: document.getElementById('pCat').value,
     badge: document.getElementById('pBadge').value || null,
     emoji: document.getElementById('pEmoji').value.trim(),
+    image_url: document.getElementById('pImgUrl').value || null,
   };
   try {
     if (editId) {
