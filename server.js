@@ -4,11 +4,18 @@ const path    = require('path');
 
 const app = express();
 app.use(express.json());
+
+// Sert les fichiers statiques depuis la racine ET le dossier public
+app.use(express.static(path.join(__dirname)));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ── Accueil
+// Accueil
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  const p1 = path.join(__dirname, 'public', 'index.html');
+  const p2 = path.join(__dirname, 'index.html');
+  const fs = require('fs');
+  if (fs.existsSync(p1)) res.sendFile(p1);
+  else res.sendFile(p2);
 });
 
 // ── Créer session Stripe Checkout
