@@ -671,7 +671,7 @@ footer{background:#050505;padding:60px 0 0;}
     </div>
     <div class="fcol"><div class="fcol-title">Boutique</div><ul><li><a href="#">Raquettes</a></li><li><a href="#">Balles</a></li><li><a href="#">Chaussures</a></li><li><a href="#">Tenues</a></li><li><a href="#">Sacs</a></li></ul></div>
     <div class="fcol"><div class="fcol-title">Infos</div><ul><li><a href="#">À propos</a></li><li><a href="#">Blog</a></li><li><a href="#">Guide tailles</a></li><li><a href="#">FAQ</a></li></ul></div>
-    <div class="fcol"><div class="fcol-title">Service</div><ul><li><a href="#">Livraison</a></li><li><a href="#">Retours</a></li><li><a href="#">Contact</a></li><li><a href="#">Mentions légales</a></li><li><a href="#" onclick="openLogin();return false;" style="color:var(--r)">Admin ⚙</a></li></ul></div>
+    <div class="fcol"><div class="fcol-title">Service</div><ul><li><a href="#">Livraison</a></li><li><a href="#">Retours</a></li><li><a href="#" onclick="openModal('contactModal');return false;">Contact</a></li><li><a href="#" onclick="openModal('mentionsModal');return false;">Mentions légales</a></li><li><a href="#" onclick="openModal('cgvModal');return false;">CGV</a></li><li><a href="#" onclick="openLogin();return false;" style="color:var(--r)">Admin ⚙</a></li></ul></div>
   </div>
   <div class="footer-bottom">
     <div class="footer-copy">© 2025 PADEL X — Tous droits réservés</div>
@@ -1040,5 +1040,136 @@ document.getElementById('adminBar').querySelector('.admin-acts').innerHTML += `
   <button class="admin-act" onclick="openStripeConfig()" style="margin-left:8px">⚡ Config Stripe</button>
 `;
 </script>
+<!-- MODAL MENTIONS LÉGALES -->
+<div class="modal-bg" id="mentionsModal">
+  <div class="modal wide" style="max-width:700px;">
+    <button class="modal-x" onclick="closeModal('mentionsModal')">✕</button>
+    <div class="modal-label">Légal</div>
+    <h2 class="modal-title">Mentions Légales</h2>
+    <div style="font-size:13px;line-height:1.9;color:#555;margin-top:20px;display:flex;flex-direction:column;gap:20px;">
+      <div>
+        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">1. Éditeur du site</strong><br/>
+        Le site padelx.fr est édité par :<br/>
+        <strong>Lucas — Particulier</strong><br/>
+        Adresse : Castelginest, France<br/>
+        Email : alxdlucaspro1@gmail.com<br/>
+        Site web : https://padelx.fr
+      </div>
+      <div>
+        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">2. Hébergement</strong><br/>
+        Le site est hébergé par :<br/>
+        <strong>Render Services, Inc.</strong><br/>
+        651 N Broad St, Suite 201, Middletown, Delaware 19709, États-Unis<br/>
+        Site : render.com
+      </div>
+      <div>
+        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">3. Propriété intellectuelle</strong><br/>
+        L'ensemble des contenus présents sur le site padelx.fr (textes, images, logos, graphismes) sont la propriété exclusive de Padel X. Toute reproduction, représentation ou diffusion, en tout ou partie, est interdite sans autorisation préalable écrite.
+      </div>
+      <div>
+        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">4. Données personnelles</strong><br/>
+        Les informations collectées lors de vos commandes sont utilisées uniquement pour le traitement de celles-ci. Conformément au RGPD et à la loi Informatique et Libertés, vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Pour exercer ce droit, contactez-nous à alxdlucaspro1@gmail.com.
+      </div>
+      <div>
+        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">5. Cookies</strong><br/>
+        Le site padelx.fr utilise des cookies techniques nécessaires au bon fonctionnement du site et au traitement des paiements via Stripe. En naviguant sur ce site, vous acceptez leur utilisation.
+      </div>
+      <div>
+        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">6. Paiement</strong><br/>
+        Les paiements sont sécurisés et traités par Stripe Inc. Padel X ne stocke aucune donnée bancaire.
+      </div>
+      <div>
+        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">7. Litiges</strong><br/>
+        En cas de litige, une solution amiable sera recherchée avant toute action judiciaire. Le droit français est applicable. Les tribunaux compétents sont ceux de Toulouse.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CGV -->
+<div class="modal-bg" id="cgvModal">
+  <div class="modal wide" style="max-width:700px;">
+    <button class="modal-x" onclick="closeModal('cgvModal')">✕</button>
+    <div class="modal-label">Légal</div>
+    <h2 class="modal-title">Conditions Générales de Vente</h2>
+    <div style="font-size:13px;line-height:1.9;color:#555;margin-top:20px;display:flex;flex-direction:column;gap:20px;">
+      <div>
+        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">1. Objet</strong><br/>
+        Les présentes CGV régissent les ventes de produits d'équipement padel effectuées sur le site padelx.fr par Lucas, particulier basé à Castelginest, France.
+      </div>
+      <div>
+        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">2. Précommandes</strong><br/>
+        Les produits proposés sur padelx.fr sont actuellement en <strong>précommande</strong>. En passant commande, vous acceptez que la livraison intervienne dans un délai maximum de <strong>7 jours ouvrés</strong> à compter de la confirmation de commande. Vous serez informé par email de l'expédition de votre colis.
+      </div>
+      <div>
+        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">3. Prix</strong><br/>
+        Les prix sont indiqués en euros TTC. Padel X se réserve le droit de modifier ses prix à tout moment. Les produits sont facturés au prix en vigueur au moment de la validation de la commande.
+      </div>
+      <div>
+        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">4. Commande</strong><br/>
+        Toute commande vaut acceptation des prix et descriptions des produits. La vente est conclue à la validation du paiement par Stripe. Un email de confirmation est envoyé automatiquement.
+      </div>
+      <div>
+        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">5. Paiement</strong><br/>
+        Le paiement s'effectue en ligne par carte bancaire via Stripe, plateforme sécurisée. Les données bancaires ne sont jamais transmises à Padel X.
+      </div>
+      <div>
+        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">6. Livraison</strong><br/>
+        Les commandes sont livrées en France métropolitaine, Belgique, Suisse, Luxembourg et Monaco. Le délai de livraison est de <strong>5 à 7 jours ouvrés</strong>. La livraison est gratuite dès 79€ d'achat.
+      </div>
+      <div>
+        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">7. Droit de rétractation</strong><br/>
+        Conformément à la loi, vous disposez d'un délai de <strong>30 jours</strong> à compter de la réception de votre commande pour exercer votre droit de rétractation, sans justification. Les frais de retour sont à votre charge sauf en cas d'article défectueux. Contactez-nous à alxdlucaspro1@gmail.com pour initier un retour.
+      </div>
+      <div>
+        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">8. Garanties</strong><br/>
+        Tous nos produits bénéficient de la garantie légale de conformité (2 ans) et de la garantie contre les vices cachés prévues par le Code Civil français.
+      </div>
+      <div>
+        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">9. Service client</strong><br/>
+        Pour toute question ou réclamation : alxdlucaspro1@gmail.com<br/>
+        Nous nous engageons à répondre sous 48h ouvrées.
+      </div>
+      <div>
+        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">10. Droit applicable</strong><br/>
+        Les présentes CGV sont soumises au droit français. En cas de litige, les tribunaux de Toulouse sont compétents.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONTACT -->
+<div class="modal-bg" id="contactModal">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal('contactModal')">✕</button>
+    <div class="modal-label">Support</div>
+    <h2 class="modal-title">Contact</h2>
+    <p class="modal-sub">Une question ? On te répond sous 48h.</p>
+    <div style="display:flex;flex-direction:column;gap:16px;margin-top:8px;">
+      <div style="display:flex;align-items:center;gap:14px;padding:16px;background:#f5f4f0;border-left:3px solid #D0021B;">
+        <span style="font-size:24px;">📧</span>
+        <div>
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:4px;">Email</div>
+          <a href="mailto:alxdlucaspro1@gmail.com" style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;color:#0a0a0a;">alxdlucaspro1@gmail.com</a>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;padding:16px;background:#f5f4f0;border-left:3px solid #D0021B;">
+        <span style="font-size:24px;">📍</span>
+        <div>
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:4px;">Localisation</div>
+          <div style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;color:#0a0a0a;">Castelginest, France</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;padding:16px;background:#f5f4f0;border-left:3px solid #D0021B;">
+        <span style="font-size:24px;">⏱️</span>
+        <div>
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:4px;">Délai de réponse</div>
+          <div style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;color:#0a0a0a;">Sous 48h ouvrées</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
