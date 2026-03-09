@@ -752,7 +752,6 @@ footer{background:#050505;padding:60px 0 0;}
 // ══ CONFIG ══
 const ADMIN_EMAIL = 'lucasalxd04@gmail.com';
 const ADMIN_PASS  = 'padelx2025';
-const SK  = 'padelx5_prods';
 const AK  = 'padelx5_auth';
 const SSK = 'padelx5_stripe';
 const EMOJIS = {Raquettes:'🏓',Balles:'🎾',Chaussures:'👟',Tenues:'👕',Sacs:'🎒',Accessoires:'🧢'};
@@ -762,16 +761,14 @@ let isAdmin=false, products=[], cart=[], curCat='all', editId=null;
 let stripePublicKey='', siteBaseUrl='';
 
 // ══ INIT ══
-document.addEventListener('DOMContentLoaded', () => {
-  // Charger données
-  try { products = JSON.parse(localStorage.getItem(SK)||'[]'); } catch(e) { products=[]; }
+document.addEventListener('DOMContentLoaded', async () => {
   isAdmin = sessionStorage.getItem(AK) === '1';
   const sc = JSON.parse(localStorage.getItem(SSK)||'{}');
   stripePublicKey = sc.key || '';
   siteBaseUrl = sc.url || window.location.origin;
 
   if (isAdmin) activateAdmin(false);
-  renderProds();
+  await loadProducts();
 
   // Reveal au scroll
   const obs = new IntersectionObserver(entries =>
@@ -784,7 +781,18 @@ document.addEventListener('DOMContentLoaded', () => {
 // ══ UTILS ══
 function goto(id) { document.getElementById(id)?.scrollIntoView({behavior:'smooth'}); }
 function fmt(n) { return parseFloat(n).toFixed(2).replace('.',',') + ' €'; }
-function save() { localStorage.setItem(SK, JSON.stringify(products)); }
+
+// ══ API PRODUITS ══
+async function loadProducts() {
+  try {
+    const res = await fetch('/api/products');
+    const data = await res.json();
+    products = data || [];
+  } catch(e) {
+    products = [];
+  }
+  renderProds();
+}
 
 // ══ AUTH ══
 function openLogin() {
@@ -847,7 +855,7 @@ function renderProds() {
         <div class="pcard-foot">
           <div>
             <span class="pcard-price">${fmt(p.price)}</span>
-            ${p.oldPrice ? `<span class="pcard-old">${fmt(p.oldPrice)}</span>` : ''}
+            ${p.old_price ? `<span class="pcard-old">${fmt(p.old_price)}</span>` : ''}
           </div>
           <button class="pcard-add" onclick="addToCart('${p.id}')">+</button>
         </div>
@@ -882,16 +890,16 @@ function editProd(id) {
   document.getElementById('pTitleEl').textContent = 'Modifier';
   document.getElementById('pBrand').value = p.brand;
   document.getElementById('pName').value = p.name;
-  document.getElementById('pDesc').value = p.desc || '';
+  document.getElementById('pDesc').value = p.description || '';
   document.getElementById('pPrice').value = p.price;
-  document.getElementById('pOld').value = p.oldPrice || '';
+  document.getElementById('pOld').value = p.old_price || '';
   document.getElementById('pCat').value = p.category;
   document.getElementById('pBadge').value = p.badge || '';
   document.getElementById('pEmoji').value = p.emoji || '';
   document.getElementById('pErr').style.display = 'none';
   openModal('prodModal');
 }
-function saveProd() {
+async function saveProd() {
   const brand = document.getElementById('pBrand').value.trim();
   const name  = document.getElementById('pName').value.trim();
   const price = document.getElementById('pPrice').value;
@@ -899,28 +907,32 @@ function saveProd() {
   document.getElementById('pErr').style.display = 'none';
   const d = {
     brand, name,
-    desc: document.getElementById('pDesc').value.trim(),
+    description: document.getElementById('pDesc').value.trim(),
     price: parseFloat(price),
-    oldPrice: document.getElementById('pOld').value ? parseFloat(document.getElementById('pOld').value) : null,
+    old_price: document.getElementById('pOld').value ? parseFloat(document.getElementById('pOld').value) : null,
     category: document.getElementById('pCat').value,
-    badge: document.getElementById('pBadge').value,
+    badge: document.getElementById('pBadge').value || null,
     emoji: document.getElementById('pEmoji').value.trim(),
   };
-  if (editId) {
-    const i = products.findIndex(p => p.id === editId);
-    if (i !== -1) products[i] = {...products[i], ...d};
-    toast('Produit modifié ✓');
-  } else {
-    d.id = 'px_' + Date.now();
-    products.unshift(d);
-    toast('Produit ajouté ✓');
+  try {
+    if (editId) {
+      await fetch(`/api/products/${editId}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(d) });
+      toast('Produit modifié ✓');
+    } else {
+      await fetch('/api/products', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(d) });
+      toast('Produit ajouté ✓');
+    }
+    await loadProducts();
+    closeModal('prodModal');
+  } catch(e) {
+    toast('Erreur : ' + e.message);
   }
-  save(); renderProds(); closeModal('prodModal');
 }
-function delProd(id) {
+async function delProd(id) {
   if (!confirm('Supprimer ce produit ?')) return;
-  products = products.filter(p => p.id !== id);
-  save(); renderProds(); toast('Produit supprimé');
+  await fetch(`/api/products/${id}`, { method:'DELETE' });
+  toast('Produit supprimé');
+  await loadProducts();
 }
 
 // ══ STRIPE CONFIG ══
@@ -1052,7 +1064,7 @@ document.getElementById('adminBar').querySelector('.admin-acts').innerHTML += `
         Le site padelx.fr est édité par :<br/>
         <strong>Lucas — Particulier</strong><br/>
         Adresse : Castelginest, France<br/>
-        Email : alxdlucaspro1@gmail.com<br/>
+        Email : <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="57363b2f333b223436242725386617303a363e3b7934383a">[email&#160;protected]</a><br/>
         Site web : https://padelx.fr
       </div>
       <div>
@@ -1068,7 +1080,7 @@ document.getElementById('adminBar').querySelector('.admin-acts').innerHTML += `
       </div>
       <div>
         <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">4. Données personnelles</strong><br/>
-        Les informations collectées lors de vos commandes sont utilisées uniquement pour le traitement de celles-ci. Conformément au RGPD et à la loi Informatique et Libertés, vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Pour exercer ce droit, contactez-nous à alxdlucaspro1@gmail.com.
+        Les informations collectées lors de vos commandes sont utilisées uniquement pour le traitement de celles-ci. Conformément au RGPD et à la loi Informatique et Libertés, vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Pour exercer ce droit, contactez-nous à <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="86e7eafee2eaf3e5e7f5f6f4e9b7c6e1ebe7efeaa8e5e9eb">[email&#160;protected]</a>.
       </div>
       <div>
         <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">5. Cookies</strong><br/>
@@ -1119,7 +1131,7 @@ document.getElementById('adminBar').querySelector('.admin-acts').innerHTML += `
       </div>
       <div>
         <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">7. Droit de rétractation</strong><br/>
-        Conformément à la loi, vous disposez d'un délai de <strong>30 jours</strong> à compter de la réception de votre commande pour exercer votre droit de rétractation, sans justification. Les frais de retour sont à votre charge sauf en cas d'article défectueux. Contactez-nous à alxdlucaspro1@gmail.com pour initier un retour.
+        Conformément à la loi, vous disposez d'un délai de <strong>30 jours</strong> à compter de la réception de votre commande pour exercer votre droit de rétractation, sans justification. Les frais de retour sont à votre charge sauf en cas d'article défectueux. Contactez-nous à <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a1c0cdd9c5cdd4c2c0d2d1d3ce90e1c6ccc0c8cd8fc2cecc">[email&#160;protected]</a> pour initier un retour.
       </div>
       <div>
         <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">8. Garanties</strong><br/>
@@ -1127,7 +1139,7 @@ document.getElementById('adminBar').querySelector('.admin-acts').innerHTML += `
       </div>
       <div>
         <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">9. Service client</strong><br/>
-        Pour toute question ou réclamation : alxdlucaspro1@gmail.com<br/>
+        Pour toute question ou réclamation : <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1d7c71657971687e7c6e6d6f722c5d7a707c7471337e7270">[email&#160;protected]</a><br/>
         Nous nous engageons à répondre sous 48h ouvrées.
       </div>
       <div>
@@ -1150,26 +1162,11 @@ document.getElementById('adminBar').querySelector('.admin-acts').innerHTML += `
         <span style="font-size:24px;">📧</span>
         <div>
           <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:4px;">Email</div>
-          <a href="mailto:alxdlucaspro1@gmail.com" style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;color:#0a0a0a;">alxdlucaspro1@gmail.com</a>
+          <a href="/cdn-cgi/l/email-protection#482924302c243d2b293b383a2779082f25292124662b2725" style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;color:#0a0a0a;"><span class="__cf_email__" data-cfemail="0d6c61756961786e6c7e7d7f623c4d6a606c6461236e6260">[email&#160;protected]</span></a>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:14px;padding:16px;background:#f5f4f0;border-left:3px solid #D0021B;">
         <span style="font-size:24px;">📍</span>
         <div>
           <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:4px;">Localisation</div>
-          <div style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;color:#0a0a0a;">Castelginest, France</div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:14px;padding:16px;background:#f5f4f0;border-left:3px solid #D0021B;">
-        <span style="font-size:24px;">⏱️</span>
-        <div>
-          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:4px;">Délai de réponse</div>
-          <div style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;color:#0a0a0a;">Sous 48h ouvrées</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-</body>
-</html>
+          <div style="font-family
