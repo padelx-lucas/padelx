@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PADEL X — Équipement Premium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+/* ══════════════════════════════
+   VARIABLES & RESET
+══════════════════════════════ */
+:root {
+  --r: #D0021B;
+  --r2: #ff0022;
+  --k: #0a0a0a;
+  --w: #f5f4f0;
+  --g: #e8e7e3;
+  --muted: #888;
+  --border: #e0dfd9;
+  --panel: #ffffff;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--w);color:var(--k);font-family:'Inter',sans-serif;overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+button{font-family:inherit;cursor:pointer;}
+img{max-width:100%;}
+
+/* ══════════════════════════════
+   TICKER
+══════════════════════════════ */
+.ticker{background:var(--k);overflow:hidden;padding:10px 0;}
+.ticker-track{display:flex;width:max-content;animation:tick 30s linear infinite;}
+.ticker-item{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.6);padding:0 48px;white-space:nowrap;display:flex;align-items:center;gap:20px;}
+.ticker-item::after{content:'✦';color:var(--r);font-size:10px;}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ══════════════════════════════
+   NAV
+══════════════════════════════ */
+nav{background:var(--w);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:900;}
+.nav-inner{max-width:1400px;margin:0 auto;padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Oswald',sans-serif;font-size:26px;font-weight:700;letter-spacing:6px;color:var(--k);}
+.logo span{color:var(--r);}
+.nav-links{display:flex;gap:36px;list-style:none;}
+.nav-links a{font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:500;color:var(--muted);transition:color .2s;}
+.nav-links a:hover{color:var(--k);}
+.nav-links a.sale{color:var(--r);}
+.nav-actions{display:flex;align-items:center;gap:12px;}
+.nav-btn{background:none;border:1.5px solid var(--border);color:var(--muted);padding:8px 16px;font-size:11px;letter-spacing:2px;text-transform:uppercase;transition:.2s;}
+.nav-btn:hover{border-color:var(--k);color:var(--k);}
+.cart-btn{position:relative;background:var(--k);color:#fff;border:none;width:42px;height:42px;display:flex;align-items:center;justify-content:center;font-size:17px;transition:background .2s;}
+.cart-btn:hover{background:var(--r);}
+.cart-btn .badge{position:absolute;top:-5px;right:-5px;background:var(--r);color:#fff;width:17px;height:17px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+
+/* ══════════════════════════════
+   ADMIN BAR
+══════════════════════════════ */
+.admin-bar{display:none;background:var(--k);padding:10px 40px;}
+.admin-bar.on{display:block;}
+.admin-bar-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;}
+.admin-status{display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.5);}
+.admin-pulse{width:6px;height:6px;background:var(--r);border-radius:50%;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.admin-status strong{color:#fff;}
+.admin-acts{display:flex;gap:8px;}
+.admin-act{background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);padding:7px 16px;font-size:10px;letter-spacing:2px;text-transform:uppercase;transition:.2s;}
+.admin-act:hover{border-color:var(--r);color:#fff;}
+.admin-act.red{background:var(--r);border-color:var(--r);color:#fff;}
+.admin-act.red:hover{background:#b0001a;}
+
+/* ══════════════════════════════
+   HERO
+══════════════════════════════ */
+.hero{min-height:92vh;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;}
+.hero-left{background:var(--k);display:flex;flex-direction:column;justify-content:flex-end;padding:80px;position:relative;overflow:hidden;}
+.hero-bg-num{position:absolute;right:-30px;bottom:-60px;font-family:'Oswald',sans-serif;font-size:clamp(200px,25vw,340px);font-weight:700;color:rgba(255,255,255,.03);line-height:1;pointer-events:none;user-select:none;}
+.hero-tag{display:inline-flex;align-items:center;gap:10px;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--r);margin-bottom:28px;}
+.hero-tag::before{content:'';width:24px;height:1px;background:var(--r);}
+.hero-h1{font-family:'Oswald',sans-serif;font-size:clamp(64px,9vw,120px);font-weight:700;line-height:.92;text-transform:uppercase;letter-spacing:-2px;color:#fff;margin-bottom:32px;}
+.hero-h1 em{font-style:normal;color:var(--r);}
+.hero-sub{font-size:15px;line-height:1.8;color:rgba(255,255,255,.45);font-weight:300;max-width:360px;margin-bottom:44px;}
+.hero-cta-row{display:flex;align-items:center;gap:20px;}
+.btn-red{background:var(--r);color:#fff;border:none;padding:16px 36px;font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:3px;text-transform:uppercase;transition:background .2s,transform .15s;}
+.btn-red:hover{background:#b0001a;transform:translateY(-1px);}
+.btn-outline-w{background:none;border:1.5px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);padding:16px 28px;font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;transition:.2s;}
+.btn-outline-w:hover{border-color:#fff;color:#fff;}
+.hero-stats{display:flex;gap:40px;margin-top:56px;padding-top:40px;border-top:1px solid rgba(255,255,255,.08);}
+.hstat-n{font-family:'Oswald',sans-serif;font-size:32px;font-weight:700;color:#fff;line-height:1;}
+.hstat-l{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:4px;}
+
+.hero-right{background:var(--g);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.hero-right-bg{position:absolute;inset:0;background:linear-gradient(135deg,#ebe9e4,#d8d6d0);}
+.hero-visual{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:32px;}
+.raquette-wrap{position:relative;}
+.hero-raquette{filter:drop-shadow(0 40px 80px rgba(0,0,0,.2));}
+.hero-label{position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);background:var(--k);color:#fff;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:3px;padding:7px 18px;white-space:nowrap;}
+.hero-badge{position:absolute;top:20px;right:-20px;background:var(--r);color:#fff;width:64px;height:64px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.hero-badge-n{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;line-height:1;}
+.hero-badge-l{font-size:8px;letter-spacing:1px;opacity:.8;}
+
+/* ══════════════════════════════
+   MARQUEE
+══════════════════════════════ */
+.marquee{border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;padding:16px 0;background:var(--w);}
+.marquee-track{display:flex;width:max-content;animation:marq 22s linear infinite;}
+.marq-word{font-family:'Oswald',sans-serif;font-size:42px;font-weight:700;color:transparent;-webkit-text-stroke:1.5px #ccc;text-transform:uppercase;padding:0 40px;letter-spacing:3px;transition:-webkit-text-stroke-color .3s;}
+.marq-word:hover{-webkit-text-stroke-color:var(--r);}
+.marq-dot{font-size:42px;color:var(--r);padding:0 10px;line-height:1;}
+@keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ══════════════════════════════
+   SECTIONS UTILS
+══════════════════════════════ */
+.section{max-width:1400px;margin:0 auto;padding:0 40px;}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:48px;}
+.sec-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--r);margin-bottom:10px;}
+.sec-title{font-family:'Oswald',sans-serif;font-size:clamp(36px,4vw,52px);font-weight:700;text-transform:uppercase;letter-spacing:-1px;line-height:1;}
+
+/* ══════════════════════════════
+   CATEGORIES
+══════════════════════════════ */
+.cats-wrap{padding:80px 0;}
+.cats-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:2px;}
+.cat-tile{background:var(--panel);border:1px solid var(--border);padding:28px 16px;text-align:center;cursor:pointer;transition:background .2s,transform .2s;position:relative;overflow:hidden;}
+.cat-tile::before{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--r);transform:scaleX(0);transition:transform .3s;}
+.cat-tile:hover{background:var(--k);transform:translateY(-3px);}
+.cat-tile:hover::before{transform:scaleX(1);}
+.cat-tile:hover .cat-ico{transform:scale(1.2);}
+.cat-tile:hover .cat-name{color:#fff;}
+.cat-ico{font-size:32px;display:block;margin-bottom:12px;transition:transform .3s;}
+.cat-name{font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:2px;text-transform:uppercase;transition:color .2s;}
+
+/* ══════════════════════════════
+   PRODUITS
+══════════════════════════════ */
+.prods-wrap{padding:0 0 100px;}
+.filter-bar{display:flex;gap:6px;flex-wrap:wrap;}
+.fpill{background:none;border:1.5px solid var(--border);color:var(--muted);padding:8px 18px;font-size:11px;letter-spacing:2px;text-transform:uppercase;transition:.2s;}
+.fpill:hover,.fpill.on{border-color:var(--k);color:var(--k);background:var(--k);color:#fff;}
+.prods-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:40px;}
+.pcard{background:var(--panel);border:1px solid var(--border);position:relative;display:flex;flex-direction:column;transition:box-shadow .25s;}
+.pcard:hover{box-shadow:0 8px 40px rgba(0,0,0,.1);}
+.pcard-img{aspect-ratio:1;background:var(--g);display:flex;align-items:center;justify-content:center;font-size:72px;position:relative;overflow:hidden;}
+.pcard-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 60%,rgba(0,0,0,.04));pointer-events:none;}
+.pcard:hover .pcard-img-ico{transform:scale(1.08);}
+.pcard-img-ico{transition:transform .3s;display:block;}
+.pbadge{position:absolute;top:12px;left:12px;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:2px;padding:4px 10px;}
+.pbadge-new{background:var(--k);color:#fff;}
+.pbadge-sale{background:var(--r);color:#fff;}
+.pbadge-hot{background:#f5a623;color:#fff;}
+.pcard-body{padding:20px;flex:1;display:flex;flex-direction:column;}
+.pcard-brand{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--r);margin-bottom:6px;}
+.pcard-name{font-family:'Oswald',sans-serif;font-size:20px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;line-height:1.1;flex:1;margin-bottom:8px;}
+.pcard-desc{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:16px;}
+.pcard-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;gap:12px;}
+.pcard-price{font-family:'Oswald',sans-serif;font-size:24px;font-weight:700;}
+.pcard-old{font-size:13px;color:var(--muted);text-decoration:line-through;margin-left:4px;}
+.pcard-add{background:var(--k);color:#fff;border:none;width:40px;height:40px;font-size:22px;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .15s;flex-shrink:0;}
+.pcard-add:hover{background:var(--r);transform:scale(1.08);}
+.pcard-admin{position:absolute;top:10px;right:10px;display:none;gap:6px;z-index:5;}
+.admin-mode .pcard-admin{display:flex;}
+.padm{width:28px;height:28px;border:none;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;}
+.padm-e{background:var(--k);color:#fff;}
+.padm-d{background:var(--r);color:#fff;}
+.empty-state{grid-column:1/-1;padding:80px;text-align:center;background:var(--panel);border:1px solid var(--border);}
+.empty-state h3{font-family:'Oswald',sans-serif;font-size:28px;color:var(--border);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;}
+.empty-state p{font-size:12px;color:var(--muted);letter-spacing:1px;}
+
+/* ══════════════════════════════
+   PROMO BAND
+══════════════════════════════ */
+.promo-band{background:var(--r);padding:72px 0;position:relative;overflow:hidden;}
+.promo-band::after{content:'X';position:absolute;right:-40px;bottom:-40px;font-family:'Oswald',sans-serif;font-size:320px;font-weight:700;color:rgba(0,0,0,.08);line-height:1;pointer-events:none;}
+.promo-inner{max-width:1400px;margin:0 auto;padding:0 40px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;position:relative;z-index:1;}
+.promo-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:16px;}
+.promo-title{font-family:'Oswald',sans-serif;font-size:clamp(48px,6vw,80px);font-weight:700;text-transform:uppercase;letter-spacing:-2px;line-height:.9;color:#fff;margin-bottom:20px;}
+.promo-desc{font-size:15px;color:rgba(255,255,255,.65);line-height:1.7;margin-bottom:28px;}
+.code-badge{display:inline-flex;align-items:center;gap:14px;background:rgba(0,0,0,.2);padding:14px 24px;margin-bottom:32px;}
+.code-badge b{font-family:'Oswald',sans-serif;font-size:20px;letter-spacing:4px;color:#fff;}
+.code-badge span{font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.45);text-transform:uppercase;}
+.btn-dark{background:var(--k);color:#fff;border:none;padding:16px 32px;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;transition:background .2s;}
+.btn-dark:hover{background:#222;}
+.perks-list{display:flex;flex-direction:column;gap:24px;}
+.perk{display:flex;align-items:flex-start;gap:18px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,.12);}
+.perk:last-child{border:none;padding-bottom:0;}
+.perk-ico{font-size:24px;flex-shrink:0;margin-top:2px;}
+.perk-title{font-family:'Oswald',sans-serif;font-size:18px;text-transform:uppercase;letter-spacing:1px;color:#fff;margin-bottom:4px;}
+.perk-desc{font-size:13px;color:rgba(255,255,255,.5);line-height:1.6;}
+
+/* ══════════════════════════════
+   BRANDS
+══════════════════════════════ */
+.brands-wrap{padding:48px 0;border-top:1px solid var(--border);}
+.brands-inner{max-width:1400px;margin:0 auto;padding:0 40px;display:flex;align-items:center;justify-content:space-between;}
+.brand-name{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;letter-spacing:3px;color:var(--border);text-transform:uppercase;transition:color .25s;cursor:default;}
+.brand-name:hover{color:var(--k);}
+
+/* ══════════════════════════════
+   NEWSLETTER
+══════════════════════════════ */
+.nl-wrap{padding:100px 0;background:var(--k);}
+.nl-inner{max-width:700px;margin:0 auto;padding:0 40px;text-align:center;}
+.nl-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:20px;}
+.nl-title{font-family:'Oswald',sans-serif;font-size:clamp(44px,6vw,72px);font-weight:700;text-transform:uppercase;letter-spacing:-2px;line-height:.95;color:#fff;margin-bottom:12px;}
+.nl-title em{font-style:normal;color:var(--r);}
+.nl-sub{font-size:14px;color:rgba(255,255,255,.35);margin-bottom:36px;}
+.nl-form{display:flex;border:1px solid rgba(255,255,255,.12);}
+.nl-form:focus-within{border-color:var(--r);}
+.nl-form input{flex:1;background:none;border:none;outline:none;padding:15px 20px;color:#fff;font-size:13px;letter-spacing:1px;}
+.nl-form input::placeholder{color:rgba(255,255,255,.2);}
+.nl-form button{background:var(--r);border:none;color:#fff;padding:15px 28px;font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;transition:background .2s;white-space:nowrap;}
+.nl-form button:hover{background:#b0001a;}
+
+/* ══════════════════════════════
+   FOOTER
+══════════════════════════════ */
+footer{background:#050505;padding:60px 0 0;}
+.footer-inner{max-width:1400px;margin:0 auto;padding:0 40px 48px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;border-bottom:1px solid rgba(255,255,255,.06);}
+.footer-logo{font-family:'Oswald',sans-serif;font-size:40px;font-weight:700;letter-spacing:5px;color:#fff;margin-bottom:16px;}
+.footer-logo span{color:var(--r);}
+.footer-desc{font-size:13px;color:rgba(255,255,255,.3);line-height:1.7;margin-bottom:24px;}
+.footer-socs{display:flex;gap:8px;}
+.fsoc{width:34px;height:34px;border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(255,255,255,.3);transition:.2s;cursor:pointer;}
+.fsoc:hover{border-color:var(--r);color:#fff;}
+.fcol-title{font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:20px;}
+.fcol ul{list-style:none;display:flex;flex-direction:column;gap:12px;}
+.fcol ul a{font-size:13px;color:rgba(255,255,255,.3);transition:color .2s;}
+.fcol ul a:hover{color:#fff;}
+.footer-bottom{max-width:1400px;margin:0 auto;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;}
+.footer-copy{font-size:11px;letter-spacing:1px;color:rgba(255,255,255,.15);}
+.footer-pays{display:flex;gap:8px;}
+.fpay{border:1px solid rgba(255,255,255,.1);padding:4px 10px;font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.2);}
+
+/* ══════════════════════════════
+   CART DRAWER
+══════════════════════════════ */
+.cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000;}
+.cart-overlay.on{display:block;}
+.cart-drawer{position:fixed;top:0;right:-480px;width:460px;height:100vh;background:#fff;z-index:1001;transition:right .3s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column;border-left:1px solid var(--border);}
+.cart-drawer.on{right:0;}
+.cart-head{padding:24px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.cart-head h3{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:2px;}
+.cart-head h3 em{font-style:normal;color:var(--r);}
+.cart-close{background:none;border:1.5px solid var(--border);color:var(--muted);width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;transition:.2s;}
+.cart-close:hover{border-color:var(--k);color:var(--k);}
+.cart-body{flex:1;overflow-y:auto;padding:16px 28px;}
+.cart-empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;}
+.cart-empty .ico{font-size:48px;opacity:.2;}
+.cart-empty p{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.cart-item{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--border);}
+.cart-thumb{width:64px;height:64px;background:var(--g);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;}
+.cart-info{flex:1;}
+.cart-brand{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--r);margin-bottom:3px;}
+.cart-name{font-family:'Oswald',sans-serif;font-size:15px;font-weight:600;text-transform:uppercase;margin-bottom:5px;}
+.cart-price{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;}
+.cart-qty-row{display:flex;align-items:center;gap:8px;margin-top:8px;}
+.qbtn{width:26px;height:26px;background:var(--g);border:1px solid var(--border);color:var(--k);font-size:14px;display:flex;align-items:center;justify-content:center;transition:.2s;}
+.qbtn:hover{background:var(--k);color:#fff;border-color:var(--k);}
+.qnum{font-size:13px;min-width:20px;text-align:center;font-weight:500;}
+.cart-rm{background:none;border:none;color:var(--border);font-size:16px;margin-left:auto;align-self:flex-start;transition:.2s;padding:2px;}
+.cart-rm:hover{color:var(--r);}
+.cart-foot{padding:20px 28px;border-top:1px solid var(--border);}
+.cart-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.cart-total-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.cart-total-val{font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;}
+.cart-pay-btn{width:100%;background:var(--k);color:#fff;border:none;padding:16px;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:10px;}
+.cart-pay-btn:hover{background:var(--r);}
+.cart-pay-btn.loading{opacity:.7;pointer-events:none;}
+.cart-note{text-align:center;margin-top:10px;font-size:11px;letter-spacing:1px;color:var(--muted);}
+.stripe-badge{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;font-size:10px;color:var(--muted);letter-spacing:1px;}
+
+/* ══════════════════════════════
+   MODALS
+══════════════════════════════ */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);z-index:2000;align-items:center;justify-content:center;padding:20px;}
+.modal-bg.on{display:flex;}
+.modal{background:#fff;width:100%;max-width:440px;padding:40px;position:relative;border-top:3px solid var(--r);animation:mIn .3s cubic-bezier(.16,1,.3,1);}
+.modal.wide{max-width:520px;max-height:90vh;overflow-y:auto;}
+@keyframes mIn{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-x{position:absolute;top:14px;right:14px;background:none;border:1.5px solid var(--border);color:var(--muted);width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:13px;transition:.2s;}
+.modal-x:hover{border-color:var(--k);color:var(--k);}
+.modal-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--r);margin-bottom:12px;}
+.modal-title{font-family:'Oswald',sans-serif;font-size:34px;font-weight:700;text-transform:uppercase;letter-spacing:-1px;margin-bottom:6px;}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:28px;}
+.mfield{margin-bottom:16px;}
+.mfield label{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.mfield input,.mfield select,.mfield textarea{width:100%;border:1.5px solid var(--border);background:#fff;color:var(--k);padding:11px 14px;font-size:13px;outline:none;transition:border-color .2s;}
+.mfield input:focus,.mfield select:focus,.mfield textarea:focus{border-color:var(--k);}
+.mfield textarea{resize:vertical;min-height:72px;}
+.mfield select option{background:#fff;}
+.mrow{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.merr{font-size:11px;color:var(--r);margin-top:8px;display:none;letter-spacing:.5px;}
+.btn-full{width:100%;background:var(--k);color:#fff;border:none;padding:14px;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;transition:background .2s;margin-top:8px;}
+.btn-full:hover{background:var(--r);}
+.modal-hint{font-size:11px;color:var(--muted);text-align:center;margin-top:14px;letter-spacing:.5px;}
+.modal-hint strong{color:var(--r);}
+
+/* ══════════════════════════════
+   TOAST
+══════════════════════════════ */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--k);color:#fff;padding:13px 28px;font-size:12px;letter-spacing:1px;z-index:9999;opacity:0;transition:.25s;pointer-events:none;white-space:nowrap;border-left:3px solid var(--r);}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ══════════════════════════════
+   REVEAL
+══════════════════════════════ */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s cubic-bezier(.16,1,.3,1);}
+.reveal.in{opacity:1;transform:translateY(0);}
+/* ══════════════════════════════
+   LOADER
+══════════════════════════════ */
+#loader{
+  position:fixed;inset:0;background:#0a0a0a;
+  z-index:99999;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:28px;
+  transition:opacity .6s ease, visibility .6s ease;
+}
+#loader.hide{opacity:0;visibility:hidden;pointer-events:none;}
+.loader-logo-wrap{overflow:hidden;}
+.loader-logo{
+  font-family:'Oswald',sans-serif;font-size:72px;font-weight:700;
+  letter-spacing:10px;color:#fff;display:flex;align-items:baseline;gap:2px;
+}
+.loader-p{
+  display:inline-block;
+  animation:lup .8s cubic-bezier(.16,1,.3,1) .15s both;
+}
+.loader-x{
+  display:inline-block;color:#D0021B;
+  animation:lup .8s cubic-bezier(.16,1,.3,1) .3s both;
+}
+@keyframes lup{
+  from{transform:translateY(100%);opacity:0}
+  to{transform:translateY(0);opacity:1}
+}
+.loader-line-wrap{
+  width:160px;height:2px;background:rgba(255,255,255,.08);overflow:hidden;
+}
+.loader-line{
+  height:100%;width:0;background:#D0021B;
+  animation:lfill 1.4s cubic-bezier(.4,0,.2,1) .3s forwards;
+}
+@keyframes lfill{to{width:100%;}}
+.loader-tag{
+  font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:4px;
+  text-transform:uppercase;color:rgba(255,255,255,.25);
+  animation:fadeIn .6s ease .8s both;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo-wrap">
+    <div class="loader-logo">
+      <span class="loader-p">PADEL</span><span class="loader-x">X</span>
+    </div>
+  </div>
+  <div class="loader-line-wrap"><div class="loader-line"></div></div>
+  <div class="loader-tag">Équipement Premium</div>
+</div>
+<script>setTimeout(function(){document.getElementById('loader').classList.add('hide');},2000);</script>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- CART OVERLAY -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+
+<!-- CART DRAWER -->
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-head">
+    <h3>Mon Panier <em id="cartHeadN"></em></h3>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-body" id="cartBody">
+    <div class="cart-empty"><div class="ico">🛒</div><p>Panier vide</p></div>
+  </div>
+  <div class="cart-foot">
+    <div class="cart-total">
+      <span class="cart-total-label">Total</span>
+      <span class="cart-total-val" id="cartTotalVal">0,00 €</span>
+    </div>
+    <button class="cart-pay-btn" id="payBtn" onclick="checkout()">
+      🔒 Précommander via Stripe
+    </button>
+    <p class="cart-note">⚡ Précommande — Livraison sous 7 jours max</p>
+    <div class="stripe-badge">🔒 Paiement sécurisé par Stripe</div>
+  </div>
+</div>
+
+<!-- ADMIN BAR -->
+<div class="admin-bar" id="adminBar">
+  <div class="admin-bar-inner">
+    <div class="admin-status">
+      <div class="admin-pulse"></div>
+      Admin connecté — <strong id="adminEmail"></strong>
+    </div>
+    <div class="admin-acts">
+      <button class="admin-act red" onclick="openAddProd()">+ Ajouter produit</button>
+      <button class="admin-act" onclick="logout()">Déconnexion</button>
+    </div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <div class="ticker-item">Nouvelle collection 2025</div>
+    <div class="ticker-item">Livraison en 7 jours max</div>
+    <div class="ticker-item">Retours gratuits 30 jours</div>
+    <div class="ticker-item">Précommande disponible</div>
+    <div class="ticker-item">Nouvelle collection 2025</div>
+    <div class="ticker-item">Livraison en 7 jours max</div>
+    <div class="ticker-item">Retours gratuits 30 jours</div>
+    <div class="ticker-item">Précommande disponible</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo">PADEL<span>X</span></div>
+    <ul class="nav-links">
+      <li><a href="#" onclick="filter('Raquettes');goto('prods');return false;">Raquettes</a></li>
+      <li><a href="#" onclick="filter('Tenues');goto('prods');return false;">Tenues</a></li>
+      <li><a href="#" onclick="filter('Chaussures');goto('prods');return false;">Chaussures</a></li>
+      <li><a href="#" onclick="filter('Accessoires');goto('prods');return false;">Accessoires</a></li>
+      <li><a href="#" class="sale">Soldes</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="nav-btn" onclick="openLogin()">Admin</button>
+      <button class="cart-btn" onclick="openCart()">
+        🛒<span class="badge" id="cartBadge">0</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-bg-num">X</div>
+    <div class="hero-tag">Collection 2025</div>
+    <h1 class="hero-h1">Joue<br/>comme<br/><em>les pros</em></h1>
+    <p class="hero-sub">Équipement premium sélectionné pour les joueurs exigeants. Raquettes, tenues, chaussures — tout pour dominer le court.</p>
+    <div class="hero-cta-row">
+      <button class="btn-red" onclick="goto('prods')">Voir la collection →</button>
+      <button class="btn-outline-w" onclick="goto('prods')">Guide d'achat</button>
+    </div>
+    <div class="hero-stats">
+      <div><div class="hstat-n">7J</div><div class="hstat-l">Livraison max</div></div>
+      <div><div class="hstat-n">30J</div><div class="hstat-l">Retours</div></div>
+      <div><div class="hstat-n">PRÉ</div><div class="hstat-l">Commande</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-right-bg"></div>
+    <div class="hero-visual">
+      <div class="raquette-wrap">
+        <svg class="hero-raquette" width="240" height="320" viewBox="0 0 200 280">
+          <ellipse cx="100" cy="96" rx="70" ry="80" fill="none" stroke="#0a0a0a" stroke-width="9"/>
+          <ellipse cx="100" cy="96" rx="55" ry="63" fill="none" stroke="rgba(0,0,0,.08)" stroke-width="1"/>
+          <line x1="70" y1="20" x2="70" y2="172" stroke="rgba(0,0,0,.1)" stroke-width="1.5"/>
+          <line x1="100" y1="16" x2="100" y2="176" stroke="rgba(0,0,0,.1)" stroke-width="1.5"/>
+          <line x1="130" y1="20" x2="130" y2="172" stroke="rgba(0,0,0,.1)" stroke-width="1.5"/>
+          <line x1="32" y1="56" x2="168" y2="56" stroke="rgba(0,0,0,.1)" stroke-width="1.5"/>
+          <line x1="30" y1="86" x2="170" y2="86" stroke="rgba(0,0,0,.1)" stroke-width="1.5"/>
+          <line x1="30" y1="116" x2="170" y2="116" stroke="rgba(0,0,0,.1)" stroke-width="1.5"/>
+          <line x1="36" y1="146" x2="164" y2="146" stroke="rgba(0,0,0,.1)" stroke-width="1.5"/>
+          <text x="100" y="108" font-family="Oswald,sans-serif" font-size="36" font-weight="700" fill="#D0021B" text-anchor="middle">X</text>
+          <rect x="88" y="174" width="24" height="82" rx="12" fill="#0a0a0a"/>
+          <rect x="93" y="179" width="14" height="72" rx="7" fill="#222"/>
+        </svg>
+        <div class="hero-badge"><div class="hero-badge-n">−10%</div><div class="hero-badge-l">CODE</div></div>
+        <div class="hero-label">PADEL X — COLLECTION 2025</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span class="marq-word">BULLPADEL</span><span class="marq-dot">✦</span>
+    <span class="marq-word">HEAD</span><span class="marq-dot">✦</span>
+    <span class="marq-word">BABOLAT</span><span class="marq-dot">✦</span>
+    <span class="marq-word">WILSON</span><span class="marq-dot">✦</span>
+    <span class="marq-word">NOX</span><span class="marq-dot">✦</span>
+    <span class="marq-word">ADIDAS</span><span class="marq-dot">✦</span>
+    <span class="marq-word">BULLPADEL</span><span class="marq-dot">✦</span>
+    <span class="marq-word">HEAD</span><span class="marq-dot">✦</span>
+    <span class="marq-word">BABOLAT</span><span class="marq-dot">✦</span>
+    <span class="marq-word">WILSON</span><span class="marq-dot">✦</span>
+    <span class="marq-word">NOX</span><span class="marq-dot">✦</span>
+    <span class="marq-word">ADIDAS</span><span class="marq-dot">✦</span>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<section class="cats-wrap reveal">
+  <div class="section">
+    <div class="sec-head">
+      <div><div class="sec-label">Univers</div><h2 class="sec-title">Toutes les catégories</h2></div>
+    </div>
+    <div class="cats-grid">
+      <div class="cat-tile" onclick="filter('Raquettes');goto('prods')"><span class="cat-ico">🏓</span><div class="cat-name">Raquettes</div></div>
+      <div class="cat-tile" onclick="filter('Balles');goto('prods')"><span class="cat-ico">🎾</span><div class="cat-name">Balles</div></div>
+      <div class="cat-tile" onclick="filter('Chaussures');goto('prods')"><span class="cat-ico">👟</span><div class="cat-name">Chaussures</div></div>
+      <div class="cat-tile" onclick="filter('Tenues');goto('prods')"><span class="cat-ico">👕</span><div class="cat-name">Tenues</div></div>
+      <div class="cat-tile" onclick="filter('Sacs');goto('prods')"><span class="cat-ico">🎒</span><div class="cat-name">Sacs</div></div>
+      <div class="cat-tile" onclick="filter('Accessoires');goto('prods')"><span class="cat-ico">🧢</span><div class="cat-name">Accessoires</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUITS -->
+<section class="prods-wrap reveal" id="prods">
+  <div class="section">
+    <div class="sec-head">
+      <div><div class="sec-label">Boutique</div><h2 class="sec-title" id="prodTitle">Tous les produits</h2></div>
+      <div class="filter-bar">
+        <button class="fpill on" onclick="filter('all')">Tout</button>
+        <button class="fpill" onclick="filter('Raquettes')">Raquettes</button>
+        <button class="fpill" onclick="filter('Balles')">Balles</button>
+        <button class="fpill" onclick="filter('Chaussures')">Chaussures</button>
+        <button class="fpill" onclick="filter('Tenues')">Tenues</button>
+        <button class="fpill" onclick="filter('Sacs')">Sacs</button>
+        <button class="fpill" onclick="filter('Accessoires')">Accessoires</button>
+      </div>
+    </div>
+    <div class="prods-grid" id="prodsGrid"></div>
+  </div>
+</section>
+
+<!-- PROMO -->
+<section class="promo-band reveal">
+  <div class="promo-inner">
+    <div>
+      <div class="promo-label">Offre exclusive</div>
+      <h2 class="promo-title">−10%<br/>sur votre<br/>1ère commande</h2>
+      <p class="promo-desc">Inscrivez-vous et recevez immédiatement votre code de réduction.</p>
+      <div class="code-badge"><b>PADELX10</b><span>Code promo</span></div><br/>
+      <button class="btn-dark" style="margin-top:20px">J'en profite →</button>
+    </div>
+    <div class="perks-list">
+      <div class="perk"><div class="perk-ico">🚚</div><div><div class="perk-title">Livraison 7 jours max</div><div class="perk-desc">Dès 79€ d'achat en France métropolitaine.</div></div></div>
+      <div class="perk"><div class="perk-ico">↩️</div><div><div class="perk-title">Retours 30 jours</div><div class="perk-desc">Retournez votre commande sans aucune justification.</div></div></div>
+      <div class="perk"><div class="perk-ico">💳</div><div><div class="perk-title">Paiement sécurisé</div><div class="perk-desc">Paiement par carte bancaire 100% sécurisé via Stripe.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- BRANDS -->
+<div class="brands-wrap reveal">
+  <div class="brands-inner">
+    <div class="brand-name">BULLPADEL</div>
+    <div class="brand-name">HEAD</div>
+    <div class="brand-name">BABOLAT</div>
+    <div class="brand-name">WILSON</div>
+    <div class="brand-name">NOX</div>
+    <div class="brand-name">ADIDAS</div>
+    <div class="brand-name">SIUX</div>
+  </div>
+</div>
+
+<!-- NEWSLETTER -->
+<div class="nl-wrap reveal">
+  <div class="nl-inner">
+    <div class="nl-label">Newsletter</div>
+    <h2 class="nl-title">Reste dans<br/>le <em>jeu</em></h2>
+    <p class="nl-sub">Nouveautés, promos exclusives, conseils padel — directement dans ta boîte.</p>
+    <div class="nl-form">
+      <input type="email" placeholder="ton@email.com"/>
+      <button onclick="toast('Inscription confirmée ✓')">S'inscrire</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">PADEL<span>X</span></div>
+      <p class="footer-desc">La référence du matériel padel en France. Raquettes, tenues, chaussures et accessoires pour tous les niveaux.</p>
+      <div class="footer-socs"><div class="fsoc">IG</div><div class="fsoc">FB</div><div class="fsoc">TK</div><div class="fsoc">YT</div></div>
+    </div>
+    <div class="fcol"><div class="fcol-title">Boutique</div><ul><li><a href="#">Raquettes</a></li><li><a href="#">Balles</a></li><li><a href="#">Chaussures</a></li><li><a href="#">Tenues</a></li><li><a href="#">Sacs</a></li></ul></div>
+    <div class="fcol"><div class="fcol-title">Infos</div><ul><li><a href="#">À propos</a></li><li><a href="#">Blog</a></li><li><a href="#">Guide tailles</a></li><li><a href="#">FAQ</a></li></ul></div>
+    <div class="fcol"><div class="fcol-title">Service</div><ul><li><a href="#">Livraison</a></li><li><a href="#">Retours</a></li><li><a href="#">Contact</a></li><li><a href="#">Mentions légales</a></li><li><a href="#" onclick="openLogin();return false;" style="color:var(--r)">Admin ⚙</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 PADEL X — Tous droits réservés</div>
+    <div class="footer-pays"><div class="fpay">VISA</div><div class="fpay">MC</div><div class="fpay">STRIPE</div><div class="fpay">PAYPAL</div></div>
+  </div>
+</footer>
+
+<!-- MODAL LOGIN -->
+<div class="modal-bg" id="loginModal">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal('loginModal')">✕</button>
+    <div class="modal-label">Espace admin</div>
+    <h2 class="modal-title">Connexion</h2>
+    <p class="modal-sub">Accès réservé à l'administrateur Padel X.</p>
+    <div class="mfield"><label>Email</label><input type="email" id="lEmail" placeholder="admin@padelx.fr"/></div>
+    <div class="mfield"><label>Mot de passe</label><input type="password" id="lPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/><div class="merr" id="lErr">Identifiants incorrects.</div></div>
+    <button class="btn-full" onclick="doLogin()">Se connecter →</button>
+    <p class="modal-hint">Mot de passe par défaut : <strong>padelx2025</strong></p>
+  </div>
+</div>
+
+<!-- MODAL PRODUIT -->
+<div class="modal-bg" id="prodModal">
+  <div class="modal wide">
+    <button class="modal-x" onclick="closeModal('prodModal')">✕</button>
+    <div class="modal-label" id="pEye">Nouveau produit</div>
+    <h2 class="modal-title" id="pTitleEl">Ajouter</h2>
+    <p class="modal-sub">Visible immédiatement sur la boutique.</p>
+    <input type="hidden" id="pId"/>
+    <div class="mfield"><label>Marque</label><input type="text" id="pBrand" placeholder="Ex: Bullpadel"/></div>
+    <div class="mfield"><label>Nom du produit</label><input type="text" id="pName" placeholder="Ex: Vertex 04 Carbon Pro"/></div>
+    <div class="mfield"><label>Description (optionnel)</label><textarea id="pDesc" placeholder="Brève description..."></textarea></div>
+    <div class="mrow">
+      <div class="mfield"><label>Prix (€)</label><input type="number" id="pPrice" placeholder="189"/></div>
+      <div class="mfield"><label>Ancien prix (€)</label><input type="number" id="pOld" placeholder="249"/></div>
+    </div>
+    <div class="mrow">
+      <div class="mfield"><label>Catégorie</label>
+        <select id="pCat">
+          <option value="Raquettes">🏓 Raquettes</option>
+          <option value="Balles">🎾 Balles</option>
+          <option value="Chaussures">👟 Chaussures</option>
+          <option value="Tenues">👕 Tenues</option>
+          <option value="Sacs">🎒 Sacs</option>
+          <option value="Accessoires">🧢 Accessoires</option>
+        </select>
+      </div>
+      <div class="mfield"><label>Badge</label>
+        <select id="pBadge">
+          <option value="">Aucun</option>
+          <option value="new">NOUVEAU</option>
+          <option value="sale">PROMO</option>
+          <option value="hot">TOP VENTE</option>
+        </select>
+      </div>
+    </div>
+    <div class="mfield"><label>Emoji du produit</label><input type="text" id="pEmoji" placeholder="🏓 👟 👕 🎒"/></div>
+    <div class="merr" id="pErr">Remplis les champs obligatoires.</div>
+    <button class="btn-full" onclick="saveProd()">Enregistrer →</button>
+  </div>
+</div>
+
+<!-- MODAL STRIPE CONFIG -->
+<div class="modal-bg" id="stripeModal">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal('stripeModal')">✕</button>
+    <div class="modal-label">Configuration</div>
+    <h2 class="modal-title">Stripe</h2>
+    <p class="modal-sub">Entre ta clé publique Stripe pour activer les paiements.</p>
+    <div class="mfield"><label>Clé publique Stripe (pk_live_... ou pk_test_...)</label><input type="text" id="stripeKey" placeholder="pk_test_..."/></div>
+    <div class="mfield"><label>URL de ton site (pour les redirections)</label><input type="text" id="siteUrl" placeholder="https://padelx.netlify.app"/></div>
+    <button class="btn-full" onclick="saveStripe()">Enregistrer →</button>
+    <p class="modal-hint">Trouve ta clé sur <strong>dashboard.stripe.com → Développeurs → Clés API</strong></p>
+  </div>
+</div>
+
+<script>
+// ══ CONFIG ══
+const ADMIN_EMAIL = 'lucasalxd04@gmail.com';
+const ADMIN_PASS  = 'padelx2025';
+const SK  = 'padelx5_prods';
+const AK  = 'padelx5_auth';
+const SSK = 'padelx5_stripe';
+const EMOJIS = {Raquettes:'🏓',Balles:'🎾',Chaussures:'👟',Tenues:'👕',Sacs:'🎒',Accessoires:'🧢'};
+
+// ══ STATE ══
+let isAdmin=false, products=[], cart=[], curCat='all', editId=null;
+let stripePublicKey='', siteBaseUrl='';
+
+// ══ INIT ══
+document.addEventListener('DOMContentLoaded', () => {
+  // Charger données
+  try { products = JSON.parse(localStorage.getItem(SK)||'[]'); } catch(e) { products=[]; }
+  isAdmin = sessionStorage.getItem(AK) === '1';
+  const sc = JSON.parse(localStorage.getItem(SSK)||'{}');
+  stripePublicKey = sc.key || '';
+  siteBaseUrl = sc.url || window.location.origin;
+
+  if (isAdmin) activateAdmin(false);
+  renderProds();
+
+  // Reveal au scroll
+  const obs = new IntersectionObserver(entries =>
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); }),
+    { threshold: 0.07 }
+  );
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+});
+
+// ══ UTILS ══
+function goto(id) { document.getElementById(id)?.scrollIntoView({behavior:'smooth'}); }
+function fmt(n) { return parseFloat(n).toFixed(2).replace('.',',') + ' €'; }
+function save() { localStorage.setItem(SK, JSON.stringify(products)); }
+
+// ══ AUTH ══
+function openLogin() {
+  if (isAdmin) { toast('Déjà connecté en admin'); return; }
+  openModal('loginModal');
+}
+function doLogin() {
+  const e = document.getElementById('lEmail').value.trim();
+  const p = document.getElementById('lPass').value;
+  const err = document.getElementById('lErr');
+  if (e === ADMIN_EMAIL && p === ADMIN_PASS) {
+    err.style.display = 'none';
+    isAdmin = true;
+    sessionStorage.setItem(AK, '1');
+    activateAdmin(true);
+    closeModal('loginModal');
+  } else {
+    err.style.display = 'block';
+  }
+}
+function activateAdmin(showToast) {
+  document.getElementById('adminBar').classList.add('on');
+  document.getElementById('adminEmail').textContent = ADMIN_EMAIL;
+  document.body.classList.add('admin-mode');
+  renderProds();
+  if (showToast) toast('Bienvenue Lucas ! 👋');
+}
+function logout() {
+  isAdmin = false;
+  sessionStorage.removeItem(AK);
+  document.getElementById('adminBar').classList.remove('on');
+  document.body.classList.remove('admin-mode');
+  renderProds();
+  toast('Déconnecté');
+}
+
+// ══ PRODUITS ══
+function renderProds() {
+  const grid = document.getElementById('prodsGrid');
+  const list = curCat === 'all' ? products : products.filter(p => p.category === curCat);
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty-state">
+      <h3>${isAdmin ? '+ Ajouter des produits' : 'Bientôt disponible'}</h3>
+      <p>${isAdmin ? 'Clique sur « Ajouter produit » dans la barre admin' : "Les produits arrivent bientôt"}</p>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = list.map(p => `
+    <div class="pcard">
+      ${p.badge ? `<div class="pbadge pbadge-${p.badge}">${p.badge==='new'?'NOUVEAU':p.badge==='sale'?'PROMO':'TOP'}</div>` : ''}
+      <div class="pcard-admin">
+        <button class="padm padm-e" onclick="editProd('${p.id}')" title="Modifier">✏</button>
+        <button class="padm padm-d" onclick="delProd('${p.id}')" title="Supprimer">✕</button>
+      </div>
+      <div class="pcard-img"><span class="pcard-img-ico">${p.emoji || EMOJIS[p.category] || '📦'}</span></div>
+      <div class="pcard-body">
+        <div class="pcard-brand">${p.brand.toUpperCase()}</div>
+        <div class="pcard-name">${p.name}</div>
+        ${p.desc ? `<div class="pcard-desc">${p.desc}</div>` : ''}
+        <div class="pcard-foot">
+          <div>
+            <span class="pcard-price">${fmt(p.price)}</span>
+            ${p.oldPrice ? `<span class="pcard-old">${fmt(p.oldPrice)}</span>` : ''}
+          </div>
+          <button class="pcard-add" onclick="addToCart('${p.id}')">+</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function filter(cat) {
+  curCat = cat;
+  document.getElementById('prodTitle').textContent = cat === 'all' ? 'Tous les produits' : cat;
+  document.querySelectorAll('.fpill').forEach(p =>
+    p.classList.toggle('on', p.textContent.toLowerCase() === (cat==='all'?'tout':cat.toLowerCase()))
+  );
+  renderProds();
+}
+
+// ══ CRUD ══
+function openAddProd() {
+  editId = null;
+  document.getElementById('pEye').textContent = 'Nouveau produit';
+  document.getElementById('pTitleEl').textContent = 'Ajouter';
+  ['pBrand','pName','pDesc','pPrice','pOld','pEmoji'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('pCat').value = 'Raquettes';
+  document.getElementById('pBadge').value = '';
+  document.getElementById('pErr').style.display = 'none';
+  openModal('prodModal');
+}
+function editProd(id) {
+  const p = products.find(x => x.id === id); if (!p) return;
+  editId = id;
+  document.getElementById('pEye').textContent = 'Modifier produit';
+  document.getElementById('pTitleEl').textContent = 'Modifier';
+  document.getElementById('pBrand').value = p.brand;
+  document.getElementById('pName').value = p.name;
+  document.getElementById('pDesc').value = p.desc || '';
+  document.getElementById('pPrice').value = p.price;
+  document.getElementById('pOld').value = p.oldPrice || '';
+  document.getElementById('pCat').value = p.category;
+  document.getElementById('pBadge').value = p.badge || '';
+  document.getElementById('pEmoji').value = p.emoji || '';
+  document.getElementById('pErr').style.display = 'none';
+  openModal('prodModal');
+}
+function saveProd() {
+  const brand = document.getElementById('pBrand').value.trim();
+  const name  = document.getElementById('pName').value.trim();
+  const price = document.getElementById('pPrice').value;
+  if (!brand || !name || !price) { document.getElementById('pErr').style.display='block'; return; }
+  document.getElementById('pErr').style.display = 'none';
+  const d = {
+    brand, name,
+    desc: document.getElementById('pDesc').value.trim(),
+    price: parseFloat(price),
+    oldPrice: document.getElementById('pOld').value ? parseFloat(document.getElementById('pOld').value) : null,
+    category: document.getElementById('pCat').value,
+    badge: document.getElementById('pBadge').value,
+    emoji: document.getElementById('pEmoji').value.trim(),
+  };
+  if (editId) {
+    const i = products.findIndex(p => p.id === editId);
+    if (i !== -1) products[i] = {...products[i], ...d};
+    toast('Produit modifié ✓');
+  } else {
+    d.id = 'px_' + Date.now();
+    products.unshift(d);
+    toast('Produit ajouté ✓');
+  }
+  save(); renderProds(); closeModal('prodModal');
+}
+function delProd(id) {
+  if (!confirm('Supprimer ce produit ?')) return;
+  products = products.filter(p => p.id !== id);
+  save(); renderProds(); toast('Produit supprimé');
+}
+
+// ══ STRIPE CONFIG ══
+function openStripeConfig() { openModal('stripeModal'); document.getElementById('stripeKey').value = stripePublicKey; document.getElementById('siteUrl').value = siteBaseUrl; }
+function saveStripe() {
+  stripePublicKey = document.getElementById('stripeKey').value.trim();
+  siteBaseUrl = document.getElementById('siteUrl').value.trim().replace(/\/$/, '');
+  localStorage.setItem(SSK, JSON.stringify({ key: stripePublicKey, url: siteBaseUrl }));
+  toast('Configuration Stripe enregistrée ✓');
+  closeModal('stripeModal');
+}
+
+// ══ PANIER ══
+function addToCart(id) {
+  const p = products.find(x => x.id === id); if (!p) return;
+  const ex = cart.find(c => c.id === id);
+  if (ex) ex.qty++; else cart.push({...p, qty:1});
+  updateCartUI();
+  toast(p.name + ' ajouté au panier');
+}
+function removeFromCart(id) { cart = cart.filter(c => c.id !== id); updateCartUI(); }
+function changeQty(id, d) {
+  const item = cart.find(c => c.id === id); if (!item) return;
+  item.qty += d;
+  if (item.qty <= 0) removeFromCart(id); else updateCartUI();
+}
+function updateCartUI() {
+  const total  = cart.reduce((s,c) => s+c.qty, 0);
+  const amount = cart.reduce((s,c) => s+c.price*c.qty, 0);
+  document.getElementById('cartBadge').textContent = total;
+  document.getElementById('cartHeadN').textContent = total ? `(${total})` : '';
+  document.getElementById('cartTotalVal').textContent = fmt(amount);
+  const body = document.getElementById('cartBody');
+  if (!cart.length) {
+    body.innerHTML = '<div class="cart-empty"><div class="ico">🛒</div><p>Panier vide</p></div>';
+    return;
+  }
+  body.innerHTML = cart.map(c => `
+    <div class="cart-item">
+      <div class="cart-thumb">${c.emoji || EMOJIS[c.category] || '📦'}</div>
+      <div class="cart-info">
+        <div class="cart-brand">${c.brand.toUpperCase()}</div>
+        <div class="cart-name">${c.name}</div>
+        <div class="cart-price">${fmt(c.price * c.qty)}</div>
+        <div class="cart-qty-row">
+          <button class="qbtn" onclick="changeQty('${c.id}',-1)">−</button>
+          <span class="qnum">${c.qty}</span>
+          <button class="qbtn" onclick="changeQty('${c.id}',1)">+</button>
+        </div>
+      </div>
+      <button class="cart-rm" onclick="removeFromCart('${c.id}')">✕</button>
+    </div>`).join('');
+}
+function openCart()  { document.getElementById('cartDrawer').classList.add('on'); document.getElementById('cartOverlay').classList.add('on'); }
+function closeCart() { document.getElementById('cartDrawer').classList.remove('on'); document.getElementById('cartOverlay').classList.remove('on'); }
+
+// ══ STRIPE CHECKOUT ══
+async function checkout() {
+  if (!cart.length) { toast('Ton panier est vide !'); return; }
+  if (!stripePublicKey) {
+    if (isAdmin) {
+      toast('Configure Stripe d\'abord !');
+      setTimeout(() => openStripeConfig(), 800);
+    } else {
+      toast('Paiement bientôt disponible');
+    }
+    return;
+  }
+  const btn = document.getElementById('payBtn');
+  btn.classList.add('loading');
+  btn.textContent = 'Redirection...';
+  try {
+    const res = await fetch('/create-checkout', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        items: cart.map(c => ({
+          name: c.brand + ' ' + c.name,
+          price: Math.round(c.price * 100),
+          qty: c.qty,
+          emoji: c.emoji || EMOJIS[c.category] || '📦'
+        })),
+        successUrl: siteBaseUrl + '/success',
+        cancelUrl: siteBaseUrl + '/'
+      })
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      throw new Error(data.error || 'Erreur');
+    }
+  } catch(e) {
+    toast('Erreur paiement : ' + e.message);
+    btn.classList.remove('loading');
+    btn.innerHTML = '🔒 Payer avec Stripe';
+  }
+}
+
+// ══ MODALS ══
+function openModal(id)  { document.getElementById(id).classList.add('on'); }
+function closeModal(id) { document.getElementById(id).classList.remove('on'); }
+document.querySelectorAll('.modal-bg').forEach(el =>
+  el.addEventListener('click', e => { if(e.target===el) el.classList.remove('on'); })
+);
+
+// ══ TOAST ══
+let _tt;
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('on');
+  clearTimeout(_tt); _tt = setTimeout(() => t.classList.remove('on'), 2600);
+}
+
+// Bouton config Stripe visible dans la barre admin
+document.getElementById('adminBar').querySelector('.admin-acts').innerHTML += `
+  <button class="admin-act" onclick="openStripeConfig()" style="margin-left:8px">⚡ Config Stripe</button>
+`;
+</script>
+</body>
+</html>
