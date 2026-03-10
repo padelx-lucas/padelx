@@ -25,7 +25,15 @@ app.get('/', (req, res) => {
   else res.sendFile(p2);
 });
 
-// ── API PRODUITS ──
+// ── Config publique (clé Stripe publique)
+app.get('/api/config', (req, res) => {
+  res.json({
+    stripePublicKey: process.env.STRIPE_PUBLIC_KEY || '',
+    baseUrl: process.env.BASE_URL || ''
+  });
+});
+
+
 
 // GET tous les produits
 app.get('/api/products', async (req, res) => {
