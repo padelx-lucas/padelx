@@ -148,8 +148,6 @@ nav{background:var(--w);border-bottom:1px solid var(--border);position:sticky;to
 .pcard-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 60%,rgba(0,0,0,.04));pointer-events:none;}
 .pcard:hover .pcard-img-ico{transform:scale(1.08);}
 .pcard-img-ico{transition:transform .3s;display:block;}
-.pcard-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
-.pcard:hover .pcard-img img{transform:scale(1.04);}
 .pbadge{position:absolute;top:12px;left:12px;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:2px;padding:4px 10px;}
 .pbadge-new{background:var(--k);color:#fff;}
 .pbadge-sale{background:var(--r);color:#fff;}
@@ -431,6 +429,133 @@ footer{background:#050505;padding:60px 0 0;}
   .hero-badge { width: 52px; height: 52px; top: 10px; right: -10px; }
   .hero-badge-n { font-size: 14px; }
 }
+
+/* ══════════════════════════════
+   RESPONSIVE MOBILE
+══════════════════════════════ */
+@media (max-width: 768px) {
+  .nav-inner { padding: 0 16px; }
+  .nav-links { display: none; }
+  .nav-btn { display: none; }
+  .logo { font-size: 20px; letter-spacing: 4px; }
+  .hero { grid-template-columns: 1fr; min-height: auto; }
+  .hero-left { padding: 48px 24px; min-height: 80vh; }
+  .hero-h1 { font-size: clamp(52px,14vw,80px); }
+  .hero-right { min-height: 340px; }
+  .hero-raquette { width: 160px; height: auto; }
+  .hero-stats { gap: 24px; flex-wrap: wrap; }
+  .hstat-n { font-size: 24px; }
+  .hero-cta-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .btn-red, .btn-outline-w { width: 100%; text-align: center; }
+  .marq-word { font-size: 28px; padding: 0 20px; }
+  .section { padding: 0 16px; }
+  .sec-head { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .sec-title { font-size: 32px; }
+  .cats-wrap { padding: 48px 0; }
+  .cats-grid { grid-template-columns: repeat(3, 1fr); gap: 2px; }
+  .cat-ico { font-size: 24px; }
+  .cat-name { font-size: 11px; }
+  .prods-wrap { padding: 0 0 60px; }
+  .prods-grid { grid-template-columns: repeat(2, 1fr); }
+  .filter-bar { gap: 4px; }
+  .fpill { padding: 6px 12px; font-size: 10px; }
+  .pcard-name { font-size: 16px; }
+  .pcard-price { font-size: 20px; }
+  .promo-inner { grid-template-columns: 1fr; gap: 40px; padding: 0 24px; }
+  .promo-title { font-size: clamp(40px, 12vw, 64px); }
+  .brands-inner { flex-wrap: wrap; gap: 16px; padding: 0 16px; justify-content: center; }
+  .brand-name { font-size: 14px; }
+  .nl-inner { padding: 0 16px; }
+  .nl-title { font-size: clamp(36px, 12vw, 56px); }
+  .nl-form { flex-direction: column; }
+  .nl-form input { border-bottom: none; }
+  .nl-form button { padding: 14px; }
+  .footer-inner { grid-template-columns: 1fr; gap: 32px; padding: 0 16px 40px; }
+  .footer-bottom { flex-direction: column; gap: 12px; padding: 16px; text-align: center; }
+  .cart-drawer { width: 100vw; right: -100vw; }
+  .admin-bar { padding: 10px 16px; }
+  .admin-bar-inner { flex-direction: column; gap: 10px; align-items: flex-start; }
+  .admin-acts { flex-wrap: wrap; gap: 6px; }
+  .admin-act { font-size: 9px; padding: 6px 12px; }
+}
+@media (max-width: 480px) {
+  .prods-grid { grid-template-columns: 1fr; }
+  .cats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ══════════════════════════════
+   PRODUCT DETAIL MODAL
+══════════════════════════════ */
+.pd-grid{display:grid;grid-template-columns:1fr 1fr;}
+.pd-img{background:var(--g);aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:100px;position:relative;overflow:hidden;}
+.pd-img img{width:100%;height:100%;object-fit:cover;}
+.pd-info{padding:40px;display:flex;flex-direction:column;justify-content:space-between;overflow-y:auto;max-height:600px;}
+.pd-brand{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--r);margin-bottom:8px;}
+.pd-name{font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;text-transform:uppercase;letter-spacing:-1px;line-height:1.1;margin-bottom:16px;}
+.pd-price-row{display:flex;align-items:baseline;gap:12px;margin-bottom:20px;}
+.pd-price{font-family:'Oswald',sans-serif;font-size:36px;font-weight:700;color:var(--k);}
+.pd-old{font-size:18px;color:var(--muted);text-decoration:line-through;}
+.pd-desc{font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:24px;border-top:1px solid var(--border);padding-top:20px;}
+.pd-qty-row{display:flex;align-items:center;gap:16px;margin-bottom:20px;}
+.pd-qty-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.pd-qty-ctrl{display:flex;align-items:center;}
+.pd-qbtn{width:36px;height:36px;background:var(--g);border:1px solid var(--border);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;}
+.pd-qbtn:hover{background:var(--k);color:#fff;border-color:var(--k);}
+.pd-qnum{width:44px;height:36px;border:1px solid var(--border);border-left:none;border-right:none;display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:18px;font-weight:600;}
+.pd-add-btn{width:100%;background:var(--k);color:#fff;border:none;padding:16px;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;}
+.pd-add-btn:hover{background:var(--r);}
+@media(max-width:768px){
+  .pd-grid{grid-template-columns:1fr;}
+  .pd-img{aspect-ratio:4/3;}
+  .pd-info{padding:24px;max-height:none;}
+}
+
+/* ══════════════════════════════
+   ABOUT MODAL
+══════════════════════════════ */
+.about-hero{background:var(--k);padding:48px 40px;position:relative;overflow:hidden;}
+.about-hero::after{content:'X';position:absolute;right:-20px;bottom:-40px;font-family:'Oswald',sans-serif;font-size:200px;font-weight:700;color:rgba(255,255,255,.04);line-height:1;pointer-events:none;}
+.about-hero-tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--r);margin-bottom:12px;}
+.about-hero-title{font-family:'Oswald',sans-serif;font-size:52px;font-weight:700;text-transform:uppercase;letter-spacing:-2px;line-height:.95;color:#fff;position:relative;z-index:1;}
+.about-hero-title em{font-style:normal;color:var(--r);}
+.about-body{padding:40px;}
+.about-values{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0;}
+.aval{padding:20px;border:1px solid var(--border);}
+.aval-ico{font-size:28px;margin-bottom:10px;}
+.aval-title{font-family:'Oswald',sans-serif;font-size:16px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.aval-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+.about-stat-row{display:flex;gap:24px;padding:24px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:28px;}
+.astat-n{font-family:'Oswald',sans-serif;font-size:36px;font-weight:700;color:var(--r);line-height:1;}
+.astat-l{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+@media(max-width:768px){
+  .about-values{grid-template-columns:1fr;}
+  .about-hero{padding:32px 24px;}
+  .about-body{padding:24px;}
+  .about-hero-title{font-size:36px;}
+}
+
+/* ══════════════════════════════
+   PCARD IMAGE
+══════════════════════════════ */
+.pcard-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
+.pcard:hover .pcard-img img{transform:scale(1.04);}
+.pcard-img{cursor:pointer;}
+.pcard-body{cursor:pointer;}
+/* ══════════════════════════════
+   LOADER
+══════════════════════════════ */
+#loader{position:fixed;inset:0;background:#0a0a0a;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;transition:opacity .6s ease, visibility .6s ease;}
+#loader.hide{opacity:0;visibility:hidden;pointer-events:none;}
+.loader-logo-wrap{overflow:hidden;}
+.loader-logo{font-family:'Oswald',sans-serif;font-size:72px;font-weight:700;letter-spacing:10px;color:#fff;display:flex;align-items:baseline;gap:2px;}
+.loader-p{display:inline-block;animation:lup .8s cubic-bezier(.16,1,.3,1) .15s both;}
+.loader-x{display:inline-block;color:#D0021B;animation:lup .8s cubic-bezier(.16,1,.3,1) .3s both;}
+@keyframes lup{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+.loader-line-wrap{width:160px;height:2px;background:rgba(255,255,255,.08);overflow:hidden;}
+.loader-line{height:100%;width:0;background:#D0021B;animation:lfill 1.4s cubic-bezier(.4,0,.2,1) .3s forwards;}
+@keyframes lfill{to{width:100%;}}
+.loader-tag{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.25);animation:fadeIn .6s ease .8s both;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 </style>
 </head>
 <body>
@@ -513,9 +638,10 @@ footer{background:#050505;padding:60px 0 0;}
       <li><a href="#" onclick="filter('Chaussures');goto('prods');return false;">Chaussures</a></li>
       <li><a href="#" onclick="filter('Accessoires');goto('prods');return false;">Accessoires</a></li>
       <li><a href="#" class="sale">Soldes</a></li>
+      <li><a href="#" onclick="openModal('aboutModal');return false;">À propos</a></li>
     </ul>
     <div class="nav-actions">
-      <button class="nav-btn" onclick="openLogin()">Connexion</button>
+      <button class="nav-btn" onclick="openLogin()">Connexion/button>
       <button class="cart-btn" onclick="openCart()">
         🛒<span class="badge" id="cartBadge">0</span>
       </button>
@@ -672,8 +798,8 @@ footer{background:#050505;padding:60px 0 0;}
       <div class="footer-socs"><div class="fsoc">IG</div><div class="fsoc">FB</div><div class="fsoc">TK</div><div class="fsoc">YT</div></div>
     </div>
     <div class="fcol"><div class="fcol-title">Boutique</div><ul><li><a href="#">Raquettes</a></li><li><a href="#">Balles</a></li><li><a href="#">Chaussures</a></li><li><a href="#">Tenues</a></li><li><a href="#">Sacs</a></li></ul></div>
-    <div class="fcol"><div class="fcol-title">Infos</div><ul><li><a href="#">À propos</a></li><li><a href="#">Blog</a></li><li><a href="#">Guide tailles</a></li><li><a href="#">FAQ</a></li></ul></div>
-    <div class="fcol"><div class="fcol-title">Service</div><ul><li><a href="#">Livraison</a></li><li><a href="#">Retours</a></li><li><a href="#" onclick="openModal('contactModal');return false;">Contact</a></li><li><a href="#" onclick="openModal('mentionsModal');return false;">Mentions légales</a></li><li><a href="#" onclick="openModal('cgvModal');return false;">CGV</a></li><li><a href="#" onclick="openLogin();return false;">Connexion</a></li></ul></div>
+    <div class="fcol"><div class="fcol-title">Infos</div><ul><li><a href="#" onclick="openModal('aboutModal');return false;">À propos</a></li><li><a href="#">Blog</a></li><li><a href="#">Guide tailles</a></li><li><a href="#">FAQ</a></li></ul></div>
+    <div class="fcol"><div class="fcol-title">Service</div><ul><li><a href="#">Livraison</a></li><li><a href="#">Retours</a></li><li><a href="#" onclick="openModal('contactModal');return false;">Contact</a></li><li><a href="#" onclick="openModal('mentionsModal');return false;">Mentions légales</a></li><li><a href="#" onclick="openLogin();return false;" >Connexion</a></li></ul></div>
   </div>
   <div class="footer-bottom">
     <div class="footer-copy">© 2025 PADEL X — Tous droits réservés</div>
@@ -729,20 +855,7 @@ footer{background:#050505;padding:60px 0 0;}
         </select>
       </div>
     </div>
-    <div class="mfield">
-      <label>Image du produit</label>
-      <div id="imgPreviewWrap" style="display:none;margin-bottom:10px;position:relative;width:100%;aspect-ratio:1;max-height:180px;background:var(--g);display:flex;align-items:center;justify-content:center;overflow:hidden;">
-        <img id="imgPreview" src="" style="width:100%;height:180px;object-fit:cover;display:none;"/>
-        <span id="imgPreviewIco" style="font-size:48px;"></span>
-        <button onclick="clearImg()" style="position:absolute;top:6px;right:6px;background:var(--r);color:#fff;border:none;width:24px;height:24px;font-size:11px;cursor:pointer;">✕</button>
-      </div>
-      <input type="file" id="pImgFile" accept="image/*" onchange="previewImg(this)" style="display:none"/>
-      <div style="display:flex;gap:8px;">
-        <button type="button" onclick="document.getElementById('pImgFile').click()" style="flex:1;background:var(--g);border:1.5px dashed var(--border);padding:12px;font-size:12px;letter-spacing:1px;cursor:pointer;transition:.2s;" onmouseover="this.style.borderColor='#0a0a0a'" onmouseout="this.style.borderColor='var(--border)'">📁 Choisir une image</button>
-      </div>
-      <input type="hidden" id="pImgUrl" value=""/>
-    </div>
-    <div class="mfield"><label>Ou emoji à la place (si pas d'image)</label><input type="text" id="pEmoji" placeholder="🏓 👟 👕 🎒"/></div>
+    <div class="mfield"><label>Emoji du produit</label><input type="text" id="pEmoji" placeholder="🏓 👟 👕 🎒"/></div>
     <div class="merr" id="pErr">Remplis les champs obligatoires.</div>
     <button class="btn-full" onclick="saveProd()">Enregistrer →</button>
   </div>
@@ -773,18 +886,22 @@ const EMOJIS = {Raquettes:'🏓',Balles:'🎾',Chaussures:'👟',Tenues:'👕',S
 // ══ STATE ══
 let isAdmin=false, products=[], cart=[], curCat='all', editId=null;
 let stripePublicKey='', siteBaseUrl='';
+let pdQty = 1;
 
 // ══ INIT ══
 document.addEventListener('DOMContentLoaded', async () => {
   isAdmin = sessionStorage.getItem(AK) === '1';
-  const sc = JSON.parse(localStorage.getItem(SSK)||'{}');
-  stripePublicKey = sc.key || '';
-  siteBaseUrl = sc.url || window.location.origin;
-
+  try {
+    const cfg = await fetch('/api/config').then(r => r.json());
+    stripePublicKey = cfg.stripePublicKey || '';
+    siteBaseUrl = cfg.baseUrl || window.location.origin;
+  } catch(e) {
+    const sc = JSON.parse(localStorage.getItem(SSK)||'{}');
+    stripePublicKey = sc.key || '';
+    siteBaseUrl = sc.url || window.location.origin;
+  }
   if (isAdmin) activateAdmin(false);
   await loadProducts();
-
-  // Reveal au scroll
   const obs = new IntersectionObserver(entries =>
     entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); }),
     { threshold: 0.07 }
@@ -802,9 +919,7 @@ async function loadProducts() {
     const res = await fetch('/api/products');
     const data = await res.json();
     products = data || [];
-  } catch(e) {
-    products = [];
-  }
+  } catch(e) { products = []; }
   renderProds();
 }
 
@@ -858,20 +973,22 @@ function renderProds() {
     <div class="pcard">
       ${p.badge ? `<div class="pbadge pbadge-${p.badge}">${p.badge==='new'?'NOUVEAU':p.badge==='sale'?'PROMO':'TOP'}</div>` : ''}
       <div class="pcard-admin">
-        <button class="padm padm-e" onclick="editProd('${p.id}')" title="Modifier">✏</button>
-        <button class="padm padm-d" onclick="delProd('${p.id}')" title="Supprimer">✕</button>
+        <button class="padm padm-e" onclick="event.stopPropagation();editProd('${p.id}')" title="Modifier">✏</button>
+        <button class="padm padm-d" onclick="event.stopPropagation();delProd('${p.id}')" title="Supprimer">✕</button>
       </div>
-      <div class="pcard-img">${p.image_url ? `<img src="${p.image_url}" alt="${p.name}"/>` : `<span class="pcard-img-ico">${p.emoji || EMOJIS[p.category] || '📦'}</span>`}</div>
-      <div class="pcard-body">
+      <div class="pcard-img" onclick="openProdDetail('${p.id}')">
+        ${p.image_url ? `<img src="${p.image_url}" alt="${p.name}"/>` : `<span class="pcard-img-ico">${p.emoji || EMOJIS[p.category] || '📦'}</span>`}
+      </div>
+      <div class="pcard-body" onclick="openProdDetail('${p.id}')">
         <div class="pcard-brand">${p.brand.toUpperCase()}</div>
         <div class="pcard-name">${p.name}</div>
-        ${p.desc ? `<div class="pcard-desc">${p.desc}</div>` : ''}
+        ${p.description ? `<div class="pcard-desc">${p.description}</div>` : ''}
         <div class="pcard-foot">
           <div>
             <span class="pcard-price">${fmt(p.price)}</span>
             ${p.old_price ? `<span class="pcard-old">${fmt(p.old_price)}</span>` : ''}
           </div>
-          <button class="pcard-add" onclick="addToCart('${p.id}')">+</button>
+          <button class="pcard-add" onclick="event.stopPropagation();addToCart('${p.id}',1)">+</button>
         </div>
       </div>
     </div>`).join('');
@@ -886,25 +1003,52 @@ function filter(cat) {
   renderProds();
 }
 
-// ══ IMAGE UPLOAD ══
-function previewImg(input) {
-  const file = input.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    document.getElementById('imgPreview').src = e.target.result;
-    document.getElementById('imgPreview').style.display = 'block';
-    document.getElementById('imgPreviewIco').style.display = 'none';
-    document.getElementById('imgPreviewWrap').style.display = 'flex';
-    document.getElementById('pImgUrl').value = e.target.result;
-  };
-  reader.readAsDataURL(file);
+// ══ PRODUCT DETAIL ══
+function openProdDetail(id) {
+  const p = products.find(x => x.id === id); if (!p) return;
+  pdQty = 1;
+  document.getElementById('pdGrid').innerHTML = `
+    <div class="pd-img">
+      ${p.image_url ? `<img src="${p.image_url}" alt="${p.name}"/>` : `<span>${p.emoji || EMOJIS[p.category] || '📦'}</span>`}
+    </div>
+    <div class="pd-info">
+      <div>
+        ${p.badge ? `<div class="pbadge pd-badge pbadge-${p.badge}" style="margin-bottom:12px;">${p.badge==='new'?'NOUVEAU':p.badge==='sale'?'PROMO':'TOP'}</div>` : ''}
+        <div class="pd-brand">${p.brand.toUpperCase()}</div>
+        <div class="pd-name">${p.name}</div>
+        <div class="pd-price-row">
+          <span class="pd-price">${fmt(p.price)}</span>
+          ${p.old_price ? `<span class="pd-old">${fmt(p.old_price)}</span>` : ''}
+        </div>
+        ${p.description ? `<div class="pd-desc">${p.description}</div>` : ''}
+      </div>
+      <div>
+        <div class="pd-qty-row">
+          <span class="pd-qty-label">Quantité</span>
+          <div class="pd-qty-ctrl">
+            <button class="pd-qbtn" onclick="pdChangeQty(-1)">−</button>
+            <div class="pd-qnum" id="pdQtyNum">1</div>
+            <button class="pd-qbtn" onclick="pdChangeQty(1)">+</button>
+          </div>
+        </div>
+        <button class="pd-add-btn" onclick="pdAddToCart('${p.id}')">
+          🛒 Ajouter au panier — <span id="pdTotalPrice">${fmt(p.price)}</span>
+        </button>
+      </div>
+    </div>`;
+  window._pdPrice = p.price;
+  window._pdName = p.name;
+  openModal('prodDetailModal');
 }
-function clearImg() {
-  document.getElementById('pImgFile').value = '';
-  document.getElementById('imgPreview').src = '';
-  document.getElementById('imgPreview').style.display = 'none';
-  document.getElementById('imgPreviewWrap').style.display = 'none';
-  document.getElementById('pImgUrl').value = '';
+function pdChangeQty(d) {
+  pdQty = Math.max(1, pdQty + d);
+  document.getElementById('pdQtyNum').textContent = pdQty;
+  document.getElementById('pdTotalPrice').textContent = fmt(window._pdPrice * pdQty);
+}
+function pdAddToCart(id) {
+  addToCart(id, pdQty);
+  closeModal('prodDetailModal');
+  openCart();
 }
 
 // ══ CRUD ══
@@ -916,7 +1060,6 @@ function openAddProd() {
   document.getElementById('pCat').value = 'Raquettes';
   document.getElementById('pBadge').value = '';
   document.getElementById('pErr').style.display = 'none';
-  clearImg();
   openModal('prodModal');
 }
 function editProd(id) {
@@ -933,16 +1076,6 @@ function editProd(id) {
   document.getElementById('pBadge').value = p.badge || '';
   document.getElementById('pEmoji').value = p.emoji || '';
   document.getElementById('pErr').style.display = 'none';
-  // Image existante
-  if (p.image_url) {
-    document.getElementById('imgPreview').src = p.image_url;
-    document.getElementById('imgPreview').style.display = 'block';
-    document.getElementById('imgPreviewIco').style.display = 'none';
-    document.getElementById('imgPreviewWrap').style.display = 'flex';
-    document.getElementById('pImgUrl').value = p.image_url;
-  } else {
-    clearImg();
-  }
   openModal('prodModal');
 }
 async function saveProd() {
@@ -959,7 +1092,6 @@ async function saveProd() {
     category: document.getElementById('pCat').value,
     badge: document.getElementById('pBadge').value || null,
     emoji: document.getElementById('pEmoji').value.trim(),
-    image_url: document.getElementById('pImgUrl').value || null,
   };
   try {
     if (editId) {
@@ -993,12 +1125,12 @@ function saveStripe() {
 }
 
 // ══ PANIER ══
-function addToCart(id) {
+function addToCart(id, qty=1) {
   const p = products.find(x => x.id === id); if (!p) return;
   const ex = cart.find(c => c.id === id);
-  if (ex) ex.qty++; else cart.push({...p, qty:1});
+  if (ex) ex.qty += qty; else cart.push({...p, qty});
   updateCartUI();
-  toast(p.name + ' ajouté au panier');
+  toast(p.name + ' ajouté au panier ✓');
 }
 function removeFromCart(id) { cart = cart.filter(c => c.id !== id); updateCartUI(); }
 function changeQty(id, d) {
@@ -1019,7 +1151,7 @@ function updateCartUI() {
   }
   body.innerHTML = cart.map(c => `
     <div class="cart-item">
-      <div class="cart-thumb">${c.emoji || EMOJIS[c.category] || '📦'}</div>
+      <div class="cart-thumb">${c.image_url ? `<img src="${c.image_url}" style="width:100%;height:100%;object-fit:cover;"/>` : (c.emoji || EMOJIS[c.category] || '📦')}</div>
       <div class="cart-info">
         <div class="cart-brand">${c.brand.toUpperCase()}</div>
         <div class="cart-name">${c.name}</div>
@@ -1040,12 +1172,8 @@ function closeCart() { document.getElementById('cartDrawer').classList.remove('o
 async function checkout() {
   if (!cart.length) { toast('Ton panier est vide !'); return; }
   if (!stripePublicKey) {
-    if (isAdmin) {
-      toast('Configure Stripe d\'abord !');
-      setTimeout(() => openStripeConfig(), 800);
-    } else {
-      toast('Paiement bientôt disponible');
-    }
+    if (isAdmin) { toast('Configure Stripe d\'abord !'); setTimeout(() => openStripeConfig(), 800); }
+    else { toast('Paiement bientôt disponible'); }
     return;
   }
   const btn = document.getElementById('payBtn');
@@ -1067,15 +1195,12 @@ async function checkout() {
       })
     });
     const data = await res.json();
-    if (data.url) {
-      window.location.href = data.url;
-    } else {
-      throw new Error(data.error || 'Erreur');
-    }
+    if (data.url) { window.location.href = data.url; }
+    else { throw new Error(data.error || 'Erreur'); }
   } catch(e) {
     toast('Erreur paiement : ' + e.message);
     btn.classList.remove('loading');
-    btn.innerHTML = '🔒 Payer avec Stripe';
+    btn.innerHTML = '🔒 Précommander via Stripe';
   }
 }
 
@@ -1094,11 +1219,51 @@ function toast(msg) {
   clearTimeout(_tt); _tt = setTimeout(() => t.classList.remove('on'), 2600);
 }
 
-// Bouton config Stripe visible dans la barre admin
 document.getElementById('adminBar').querySelector('.admin-acts').innerHTML += `
   <button class="admin-act" onclick="openStripeConfig()" style="margin-left:8px">⚡ Config Stripe</button>
 `;
 </script>
+
+<!-- MODAL DETAIL PRODUIT -->
+<div class="modal-bg" id="prodDetailModal">
+  <div class="modal" style="max-width:860px;padding:0;overflow:hidden;border-top:none;">
+    <button class="modal-x" onclick="closeModal('prodDetailModal')" style="z-index:10;top:12px;right:12px;">✕</button>
+    <div class="pd-grid" id="pdGrid"></div>
+  </div>
+</div>
+
+<!-- MODAL À PROPOS -->
+<div class="modal-bg" id="aboutModal">
+  <div class="modal wide" style="max-width:680px;padding:0;overflow:hidden;border-top:none;">
+    <button class="modal-x" onclick="closeModal('aboutModal')" style="top:12px;right:12px;z-index:10;border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.5);">✕</button>
+    <div class="about-hero">
+      <div class="about-hero-tag">Notre histoire</div>
+      <h2 class="about-hero-title">PADEL<em>X</em><br/>C'EST QUOI ?</h2>
+    </div>
+    <div class="about-body">
+      <p style="font-size:14px;color:#555;line-height:1.9;margin-bottom:24px;">
+        Padel X est né d'une passion simple : rendre l'équipement padel premium accessible à tous les joueurs français. Trop souvent, le bon matériel est réservé à ceux qui savent où chercher — ou qui paient trop cher.
+      </p>
+      <p style="font-size:14px;color:#555;line-height:1.9;margin-bottom:28px;">
+        On sélectionne les meilleures raquettes, tenues, chaussures et accessoires des plus grandes marques — Bullpadel, Head, Babolat, Wilson, Nox, Adidas — et on te les livre directement, en 7 jours max, avec un service client réactif.
+      </p>
+      <div class="about-stat-row">
+        <div><div class="astat-n">7J</div><div class="astat-l">Livraison max</div></div>
+        <div><div class="astat-n">30J</div><div class="astat-l">Retours</div></div>
+        <div><div class="astat-n">100%</div><div class="astat-l">Sécurisé</div></div>
+        <div><div class="astat-n">7+</div><div class="astat-l">Marques</div></div>
+      </div>
+      <div class="about-values">
+        <div class="aval"><div class="aval-ico">🎯</div><div class="aval-title">Sélection exigeante</div><div class="aval-desc">Chaque produit est choisi pour sa qualité et son rapport qualité/prix.</div></div>
+        <div class="aval"><div class="aval-ico">🚚</div><div class="aval-title">Livraison rapide</div><div class="aval-desc">Livraison en 7 jours max en France, Belgique, Suisse et Luxembourg.</div></div>
+        <div class="aval"><div class="aval-ico">💳</div><div class="aval-title">Paiement sécurisé</div><div class="aval-desc">100% sécurisé via Stripe. Aucune donnée bancaire stockée.</div></div>
+        <div class="aval"><div class="aval-ico">↩️</div><div class="aval-title">Retours faciles</div><div class="aval-desc">30 jours pour changer d'avis, sans justification.</div></div>
+      </div>
+      <button class="btn-red" style="width:100%;cursor:pointer;" onclick="closeModal('aboutModal');goto('prods')">Voir la boutique →</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL MENTIONS LÉGALES -->
 <div class="modal-bg" id="mentionsModal">
   <div class="modal wide" style="max-width:700px;">
@@ -1106,41 +1271,12 @@ document.getElementById('adminBar').querySelector('.admin-acts').innerHTML += `
     <div class="modal-label">Légal</div>
     <h2 class="modal-title">Mentions Légales</h2>
     <div style="font-size:13px;line-height:1.9;color:#555;margin-top:20px;display:flex;flex-direction:column;gap:20px;">
-      <div>
-        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">1. Éditeur du site</strong><br/>
-        Le site padelx.fr est édité par :<br/>
-        <strong>Lucas — Particulier</strong><br/>
-        Adresse : Castelginest, France<br/>
-        Email : <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="57363b2f333b223436242725386617303a363e3b7934383a">[email&#160;protected]</a><br/>
-        Site web : https://padelx.fr
-      </div>
-      <div>
-        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">2. Hébergement</strong><br/>
-        Le site est hébergé par :<br/>
-        <strong>Render Services, Inc.</strong><br/>
-        651 N Broad St, Suite 201, Middletown, Delaware 19709, États-Unis<br/>
-        Site : render.com
-      </div>
-      <div>
-        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">3. Propriété intellectuelle</strong><br/>
-        L'ensemble des contenus présents sur le site padelx.fr (textes, images, logos, graphismes) sont la propriété exclusive de Padel X. Toute reproduction, représentation ou diffusion, en tout ou partie, est interdite sans autorisation préalable écrite.
-      </div>
-      <div>
-        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">4. Données personnelles</strong><br/>
-        Les informations collectées lors de vos commandes sont utilisées uniquement pour le traitement de celles-ci. Conformément au RGPD et à la loi Informatique et Libertés, vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Pour exercer ce droit, contactez-nous à <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="86e7eafee2eaf3e5e7f5f6f4e9b7c6e1ebe7efeaa8e5e9eb">[email&#160;protected]</a>.
-      </div>
-      <div>
-        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">5. Cookies</strong><br/>
-        Le site padelx.fr utilise des cookies techniques nécessaires au bon fonctionnement du site et au traitement des paiements via Stripe. En naviguant sur ce site, vous acceptez leur utilisation.
-      </div>
-      <div>
-        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">6. Paiement</strong><br/>
-        Les paiements sont sécurisés et traités par Stripe Inc. Padel X ne stocke aucune donnée bancaire.
-      </div>
-      <div>
-        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">7. Litiges</strong><br/>
-        En cas de litige, une solution amiable sera recherchée avant toute action judiciaire. Le droit français est applicable. Les tribunaux compétents sont ceux de Toulouse.
-      </div>
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">1. Éditeur du site</strong><br/>Le site padelx.fr est édité par :<br/><strong>Lucas — Particulier</strong><br/>Adresse : Castelginest, France<br/>Email : <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="86e7eafee2eaf3e5e7f5f6f4e9b7c6e1ebe7efeaa8e5e9eb">[email&#160;protected]</a><br/>Site web : https://padelx.fr</div>
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">2. Hébergement</strong><br/>Render Services, Inc. — 651 N Broad St, Middletown, Delaware, États-Unis</div>
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">3. Propriété intellectuelle</strong><br/>L'ensemble des contenus de padelx.fr sont la propriété exclusive de Padel X. Toute reproduction sans autorisation est interdite.</div>
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">4. Données personnelles</strong><br/>Conformément au RGPD, vous disposez d'un droit d'accès, rectification et suppression. Contact : <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9afbf6e2fef6eff9fbe9eae8f5abdafdf7fbf3f6b4f9f5f7">[email&#160;protected]</a></div>
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">5. Paiement</strong><br/>Les paiements sont sécurisés par Stripe Inc. Padel X ne stocke aucune donnée bancaire.</div>
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">6. Litiges</strong><br/>Droit français applicable. Tribunaux compétents : Toulouse.</div>
     </div>
   </div>
 </div>
@@ -1150,49 +1286,15 @@ document.getElementById('adminBar').querySelector('.admin-acts').innerHTML += `
   <div class="modal wide" style="max-width:700px;">
     <button class="modal-x" onclick="closeModal('cgvModal')">✕</button>
     <div class="modal-label">Légal</div>
-    <h2 class="modal-title">Conditions Générales de Vente</h2>
+    <h2 class="modal-title">CGV</h2>
     <div style="font-size:13px;line-height:1.9;color:#555;margin-top:20px;display:flex;flex-direction:column;gap:20px;">
-      <div>
-        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">1. Objet</strong><br/>
-        Les présentes CGV régissent les ventes de produits d'équipement padel effectuées sur le site padelx.fr par Lucas, particulier basé à Castelginest, France.
-      </div>
-      <div>
-        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">2. Précommandes</strong><br/>
-        Les produits proposés sur padelx.fr sont actuellement en <strong>précommande</strong>. En passant commande, vous acceptez que la livraison intervienne dans un délai maximum de <strong>7 jours ouvrés</strong> à compter de la confirmation de commande. Vous serez informé par email de l'expédition de votre colis.
-      </div>
-      <div>
-        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">3. Prix</strong><br/>
-        Les prix sont indiqués en euros TTC. Padel X se réserve le droit de modifier ses prix à tout moment. Les produits sont facturés au prix en vigueur au moment de la validation de la commande.
-      </div>
-      <div>
-        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">4. Commande</strong><br/>
-        Toute commande vaut acceptation des prix et descriptions des produits. La vente est conclue à la validation du paiement par Stripe. Un email de confirmation est envoyé automatiquement.
-      </div>
-      <div>
-        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">5. Paiement</strong><br/>
-        Le paiement s'effectue en ligne par carte bancaire via Stripe, plateforme sécurisée. Les données bancaires ne sont jamais transmises à Padel X.
-      </div>
-      <div>
-        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">6. Livraison</strong><br/>
-        Les commandes sont livrées en France métropolitaine, Belgique, Suisse, Luxembourg et Monaco. Le délai de livraison est de <strong>5 à 7 jours ouvrés</strong>. La livraison est gratuite dès 79€ d'achat.
-      </div>
-      <div>
-        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">7. Droit de rétractation</strong><br/>
-        Conformément à la loi, vous disposez d'un délai de <strong>30 jours</strong> à compter de la réception de votre commande pour exercer votre droit de rétractation, sans justification. Les frais de retour sont à votre charge sauf en cas d'article défectueux. Contactez-nous à <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a1c0cdd9c5cdd4c2c0d2d1d3ce90e1c6ccc0c8cd8fc2cecc">[email&#160;protected]</a> pour initier un retour.
-      </div>
-      <div>
-        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">8. Garanties</strong><br/>
-        Tous nos produits bénéficient de la garantie légale de conformité (2 ans) et de la garantie contre les vices cachés prévues par le Code Civil français.
-      </div>
-      <div>
-        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">9. Service client</strong><br/>
-        Pour toute question ou réclamation : <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1d7c71657971687e7c6e6d6f722c5d7a707c7471337e7270">[email&#160;protected]</a><br/>
-        Nous nous engageons à répondre sous 48h ouvrées.
-      </div>
-      <div>
-        <strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">10. Droit applicable</strong><br/>
-        Les présentes CGV sont soumises au droit français. En cas de litige, les tribunaux de Toulouse sont compétents.
-      </div>
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">1. Précommandes</strong><br/>Les produits sont en <strong>précommande</strong>. Livraison sous <strong>7 jours ouvrés</strong> maximum.</div>
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">2. Prix</strong><br/>Prix en euros TTC. Facturés au prix en vigueur au moment de la commande.</div>
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">3. Paiement</strong><br/>Paiement sécurisé par carte bancaire via Stripe. Aucune donnée bancaire transmise à Padel X.</div>
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">4. Livraison</strong><br/>France, Belgique, Suisse, Luxembourg, Monaco. Délai : 5 à 7 jours ouvrés. Gratuite dès 79€.</div>
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">5. Rétractation</strong><br/><strong>30 jours</strong> pour retourner votre commande sans justification. Contact : <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c7a6abbfa3abb2a4a6b4b7b5a8f687a0aaa6aeabe9a4a8aa">[email&#160;protected]</a></div>
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">6. Garanties</strong><br/>Garantie légale de conformité 2 ans et garantie contre les vices cachés.</div>
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">7. Contact</strong><br/><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0e6f62766a627b6d6f7d7e7c613f4e69636f6762206d6163">[email&#160;protected]</a> — Réponse sous 48h ouvrées.</div>
     </div>
   </div>
 </div>
@@ -1209,7 +1311,7 @@ document.getElementById('adminBar').querySelector('.admin-acts').innerHTML += `
         <span style="font-size:24px;">📧</span>
         <div>
           <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:4px;">Email</div>
-          <a href="/cdn-cgi/l/email-protection#482924302c243d2b293b383a2779082f25292124662b2725" style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;color:#0a0a0a;"><span class="__cf_email__" data-cfemail="0d6c61756961786e6c7e7d7f623c4d6a606c6461236e6260">[email&#160;protected]</span></a>
+          <a href="/cdn-cgi/l/email-protection#86e7eafee2eaf3e5e7f5f6f4e9b7c6e1ebe7efeaa8e5e9eb" style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;color:#0a0a0a;"><span class="__cf_email__" data-cfemail="4b2a27332f273e282a383b39247a0b2c262a222765282426">[email&#160;protected]</span></a>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:14px;padding:16px;background:#f5f4f0;border-left:3px solid #D0021B;">
