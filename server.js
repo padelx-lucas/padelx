@@ -2,6 +2,7 @@ const express = require('express');
 const stripe  = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const path    = require('path');
 const { createClient } = require('@supabase/supabase-js');
+const Anthropic = require('@anthropic-ai/sdk');
 
 const app = express();
 app.use(express.json());
@@ -11,6 +12,9 @@ const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_KEY
 );
+
+// Anthropic
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 // Sert les fichiers statiques
 app.use(express.static(path.join(__dirname)));
@@ -25,7 +29,7 @@ app.get('/', (req, res) => {
   else res.sendFile(p2);
 });
 
-// ── Config publique (clé Stripe publique)
+// ── Config publique
 app.get('/api/config', (req, res) => {
   res.json({
     stripePublicKey: process.env.STRIPE_PUBLIC_KEY || '',
@@ -33,48 +37,110 @@ app.get('/api/config', (req, res) => {
   });
 });
 
-
-
-// GET tous les produits
+// ── API PRODUITS ──
 app.get('/api/products', async (req, res) => {
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .order('created_at', { ascending: false });
+  const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data);
+});
+app.post('/api/products', async (req, res) => {
+  const { data, error } = await supabase.from('products').insert([req.body]).select();
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data[0]);
+});
+app.put('/api/products/:id', async (req, res) => {
+  const { data, error } = await supabase.from('products').update(req.body).eq('id', req.params.id).select();
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data[0]);
+});
+app.delete('/api/products/:id', async (req, res) => {
+  const { error } = await supabase.from('products').delete().eq('id', req.params.id);
+  if (error) return res.status(500).json({ error: error.message });
+  res.json({ success: true });
+});
+
+// ── API NEWS ──
+app.get('/api/news', async (req, res) => {
+  const { data, error } = await supabase.from('news').select('*').order('created_at', { ascending: false }).limit(10);
   if (error) return res.status(500).json({ error: error.message });
   res.json(data);
 });
 
-// POST ajouter un produit
-app.post('/api/products', async (req, res) => {
-  const { data, error } = await supabase
-    .from('products')
-    .insert([req.body])
-    .select();
+// ── API CONSEILS ──
+app.get('/api/conseils', async (req, res) => {
+  const { data, error } = await supabase.from('conseils').select('*').order('created_at', { ascending: false });
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data);
+});
+app.post('/api/conseils', async (req, res) => {
+  const { data, error } = await supabase.from('conseils').insert([req.body]).select();
   if (error) return res.status(500).json({ error: error.message });
   res.json(data[0]);
 });
-
-// PUT modifier un produit
-app.put('/api/products/:id', async (req, res) => {
-  const { data, error } = await supabase
-    .from('products')
-    .update(req.body)
-    .eq('id', req.params.id)
-    .select();
-  if (error) return res.status(500).json({ error: error.message });
-  res.json(data[0]);
-});
-
-// DELETE supprimer un produit
-app.delete('/api/products/:id', async (req, res) => {
-  const { error } = await supabase
-    .from('products')
-    .delete()
-    .eq('id', req.params.id);
+app.delete('/api/conseils/:id', async (req, res) => {
+  const { error } = await supabase.from('conseils').delete().eq('id', req.params.id);
   if (error) return res.status(500).json({ error: error.message });
   res.json({ success: true });
 });
+
+// ── ROBOT IA — Génère les actus du jour ──
+async function genererActus() {
+  console.log('🤖 Génération des actus padel...');
+  try {
+    const today = new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    const msg = await anthropic.messages.create({
+      model: 'claude-opus-4-6',
+      max_tokens: 1000,
+      messages: [{
+        role: 'user',
+        content: `Tu es le rédacteur du site Padel X, une boutique padel premium française.
+Aujourd'hui nous sommes le ${today}.
+Génère 4 courtes actualités padel variées (tournois, tendances, conseils, nouveautés matériel, compétitions, astuces).
+Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte autour :
+[
+  {"title": "titre court accrocheur", "content": "2-3 phrases informatives et engageantes.", "category": "Tournoi|Matériel|Conseil|Tendance"},
+  ...
+]`
+      }]
+    });
+
+    const raw = msg.content[0].text.trim();
+    const actus = JSON.parse(raw);
+
+    // Supprimer les actus d'hier
+    await supabase.from('news').delete().lt('created_at', new Date(Date.now() - 24*60*60*1000).toISOString());
+
+    // Insérer les nouvelles
+    for (const actu of actus) {
+      await supabase.from('news').insert([actu]);
+    }
+    console.log(`✅ ${actus.length} actus générées`);
+  } catch(e) {
+    console.error('❌ Erreur génération actus:', e.message);
+  }
+}
+
+// ── CRON — Chaque matin à 7h ──
+function scheduleCron() {
+  const now = new Date();
+  const next7h = new Date();
+  next7h.setHours(7, 0, 0, 0);
+  if (next7h <= now) next7h.setDate(next7h.getDate() + 1);
+  const delay = next7h - now;
+  console.log(`⏰ Prochaines actus dans ${Math.round(delay/1000/60)} minutes`);
+  setTimeout(() => {
+    genererActus();
+    setInterval(genererActus, 24 * 60 * 60 * 1000); // puis toutes les 24h
+  }, delay);
+}
+
+// Route manuelle pour forcer la génération (admin)
+app.post('/api/news/generer', async (req, res) => {
+  await genererActus();
+  const { data } = await supabase.from('news').select('*').order('created_at', { ascending: false }).limit(10);
+  res.json({ success: true, news: data });
+});
+
 
 // ── Créer session Stripe Checkout
 app.post('/create-checkout', async (req, res) => {
@@ -170,4 +236,12 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ PADEL X server démarré sur le port ${PORT}`);
   console.log(`   Stripe: ${process.env.STRIPE_SECRET_KEY ? '✓ configuré' : '⚠ clé manquante'}`);
+  console.log(`   Supabase: ${process.env.SUPABASE_URL ? '✓ configuré' : '⚠ clé manquante'}`);
+  console.log(`   IA: ${process.env.ANTHROPIC_API_KEY ? '✓ configuré' : '⚠ clé manquante'}`);
+  scheduleCron();
+  // Générer les actus au démarrage si la table est vide
+  supabase.from('news').select('id').limit(1).then(({ data }) => {
+    if (!data || data.length === 0) genererActus();
+  });
+});
 });
