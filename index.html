@@ -923,7 +923,18 @@ footer{background:#050505;padding:60px 0 0;}
         </select>
       </div>
     </div>
-    <div class="mfield"><label>Emoji du produit</label><input type="text" id="pEmoji" placeholder="🏓 👟 👕 🎒"/></div>
+    <div class="mfield"><label>Emoji du produit (si pas d'image)</label><input type="text" id="pEmoji" placeholder="🏓 👟 👕 🎒"/></div>
+    <div class="mfield">
+      <label>Image du produit</label>
+      <div id="imgPreviewWrap" style="display:none;margin-bottom:10px;width:100%;height:180px;background:var(--g);position:relative;overflow:hidden;">
+        <img id="imgPreview" src="" style="width:100%;height:100%;object-fit:cover;"/>
+        <button type="button" onclick="clearImg()" style="position:absolute;top:6px;right:6px;background:var(--r);color:#fff;border:none;width:24px;height:24px;font-size:11px;cursor:pointer;">✕</button>
+      </div>
+      <input type="file" id="pImgFile" accept="image/*" onchange="previewImg(this)" style="display:none"/>
+      <input type="hidden" id="pImgUrl" value=""/>
+      <button type="button" onclick="document.getElementById('pImgFile').click()" style="width:100%;background:var(--g);border:1.5px dashed var(--border);padding:12px;font-size:12px;letter-spacing:1px;cursor:pointer;">📁 Choisir une image</button>
+      <div id="imgUploadStatus" style="font-size:11px;color:var(--muted);margin-top:6px;"></div>
+    </div>
     <div class="merr" id="pErr">Remplis les champs obligatoires.</div>
     <button class="btn-full" onclick="saveProd()">Enregistrer →</button>
   </div>
@@ -1121,6 +1132,39 @@ function pdAddToCart(id) {
   openCart();
 }
 
+// ══ IMAGE UPLOAD ══
+function previewImg(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('imgPreview').src = e.target.result;
+    document.getElementById('imgPreviewWrap').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+  document.getElementById('imgUploadStatus').textContent = 'Upload en cours...';
+  document.getElementById('pImgUrl').value = '';
+  const formData = new FormData();
+  formData.append('image', file);
+  fetch('/api/upload', { method: 'POST', body: formData })
+    .then(r => r.json())
+    .then(data => {
+      if (data.url) {
+        document.getElementById('pImgUrl').value = data.url;
+        document.getElementById('imgUploadStatus').textContent = '✓ Image uploadée';
+      } else {
+        document.getElementById('imgUploadStatus').textContent = 'Erreur : ' + (data.error || 'inconnue');
+      }
+    })
+    .catch(() => { document.getElementById('imgUploadStatus').textContent = 'Erreur upload'; });
+}
+function clearImg() {
+  document.getElementById('pImgFile').value = '';
+  document.getElementById('imgPreview').src = '';
+  document.getElementById('imgPreviewWrap').style.display = 'none';
+  document.getElementById('pImgUrl').value = '';
+  document.getElementById('imgUploadStatus').textContent = '';
+}
+
 // ══ CRUD ══
 function openAddProd() {
   editId = null;
@@ -1130,6 +1174,7 @@ function openAddProd() {
   document.getElementById('pCat').value = 'Raquettes';
   document.getElementById('pBadge').value = '';
   document.getElementById('pErr').style.display = 'none';
+  clearImg();
   openModal('prodModal');
 }
 function editProd(id) {
@@ -1162,6 +1207,7 @@ async function saveProd() {
     category: document.getElementById('pCat').value,
     badge: document.getElementById('pBadge').value || null,
     emoji: document.getElementById('pEmoji').value.trim(),
+    image_url: document.getElementById('pImgUrl').value || null,
   };
   try {
     if (editId) {
@@ -1368,9 +1414,16 @@ document.getElementById('adminBar').querySelector('.admin-acts').innerHTML += `
 
 async function genererActusNow() {
   toast('Génération en cours... ⏳');
-  await fetch('/api/news/generer', { method: 'POST' });
-  await loadNews();
-  toast('Actus générées ✓');
+  try {
+    const res = await fetch('/api/news/generer', { method: 'POST' });
+    const data = await res.json();
+    if (data.success) {
+      await loadNews();
+      toast('Actus générées ✓');
+    }
+  } catch(e) {
+    toast('Erreur : ' + e.message);
+  }
 }
 
 </script>
