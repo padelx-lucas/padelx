@@ -3,13 +3,11 @@ const stripe   = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const path     = require('path');
 const fs       = require('fs');
 const { createClient } = require('@supabase/supabase-js');
-const Anthropic = require('@anthropic-ai/sdk');
 
 const app = express();
 app.use(express.json());
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 app.use(express.static(path.join(__dirname)));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -76,23 +74,45 @@ app.delete('/api/conseils/:id', async (req, res) => {
   res.json({ success: true });
 });
 
-// ROBOT IA
+// ROBOT ACTUS — Système de rotation gratuit
+const ACTUS_POOL = [
+  { title: "Le padel, sport le plus pratiqué en France ?", content: "Le padel continue sa montée en puissance avec plus de 300 000 licenciés en France. Les clubs se multiplient partout sur le territoire, notamment dans les grandes villes. Un phénomène qui ne montre aucun signe de ralentissement.", category: "Tendance" },
+  { title: "Bullpadel dévoile sa nouvelle gamme 2025", content: "La marque espagnole Bullpadel frappe fort cette année avec une collection entièrement repensée. Nouvelles technologies de cadre, grips améliorés et designs exclusifs au programme. Les précommandes sont déjà ouvertes.", category: "Matériel" },
+  { title: "Comment améliorer son service au padel ?", content: "Le service est souvent négligé par les joueurs débutants et intermédiaires. Pourtant, un bon service peut faire toute la différence dans un match. Travaillez votre placement, la rotation de la balle et variez les angles.", category: "Conseil" },
+  { title: "World Padel Tour : les résultats du week-end", content: "Le circuit professionnel de padel a livré des rencontres spectaculaires ce week-end. Les têtes de série ont confirmé leur domination mais quelques surprises sont venues pimenter la compétition. Rendez-vous au prochain tournoi.", category: "Tournoi" },
+  { title: "Head lance la raquette Alpha Motion Pro", content: "Head continue d'innover avec la Alpha Motion Pro, conçue pour les joueurs de niveau intermédiaire à avancé. Son cadre en carbone 100% offre puissance et contrôle. Disponible en édition limitée.", category: "Matériel" },
+  { title: "Padel et tennis : quelles différences ?", content: "Beaucoup de joueurs de tennis se tournent vers le padel. Si les deux sports partagent certaines bases, les stratégies et les techniques sont très différentes. Les murs changent tout à la tactique de jeu.", category: "Conseil" },
+  { title: "Tournoi Open de Paris : inscriptions ouvertes", content: "Le prestigieux Open de Paris ouvre ses inscriptions pour toutes les catégories. Amateur ou confirmé, il y a une place pour tout le monde. Les matchs se dérouleront sur les courts couverts du Stade de France.", category: "Tournoi" },
+  { title: "Adidas présente ses nouvelles chaussures padel", content: "Adidas dévoile sa collection de chaussures dédiées au padel pour la saison 2025. Grip renforcé, amorti optimisé et look premium au programme. Parfaites pour les surfaces synthétiques et le gazon artificiel.", category: "Matériel" },
+  { title: "5 erreurs à éviter au padel quand on débute", content: "Se précipiter au filet, frapper trop fort, négliger la défense... Les débutants font souvent les mêmes erreurs. En les corrigeant rapidement, vous progresserez bien plus vite et prendrez plus de plaisir sur le court.", category: "Conseil" },
+  { title: "Le padel féminin en pleine explosion", content: "La pratique du padel féminin explose en France avec une augmentation de 40% de licenciées en un an. Les clubs ouvrent des créneaux dédiés et les compétitions féminines attirent de plus en plus de participantes.", category: "Tendance" },
+  { title: "Nox présente la raquette Luxury Carbon 2025", content: "Nox, marque de référence dans le monde du padel, sort sa nouvelle Luxury Carbon. Conçue avec les meilleurs matériaux, elle offre une précision redoutable et une puissance de frappe exceptionnelle.", category: "Matériel" },
+  { title: "Comment choisir sa raquette de padel ?", content: "Ronde, larme ou diamant ? Le choix de la forme dépend de votre niveau et de votre style de jeu. Les débutants privilégient la forme ronde pour sa facilité de prise en main. Les avancés optent pour le diamant pour sa puissance.", category: "Conseil" },
+  { title: "Championnat de France de Padel : les qualifiés", content: "Les phases de qualification du Championnat de France de Padel touchent à leur fin. Les meilleures équipes de chaque région s'affrontent pour décrocher leur billet pour la finale nationale. Le niveau est exceptionnel cette année.", category: "Tournoi" },
+  { title: "Le padel s'installe dans les stations de ski", content: "Nouvelle tendance : les courts de padel font leur apparition dans les stations de ski. Une façon originale de pratiquer son sport favori en altitude. Plusieurs stations alpines ont déjà investi dans des infrastructures dédiées.", category: "Tendance" },
+  { title: "Wilson Ultra Team V2 : test et avis", content: "On a testé la nouvelle Wilson Ultra Team V2, et le moins qu'on puisse dire c'est qu'elle tient ses promesses. Excellent rapport qualité-prix, bonne tolérance aux frappes décentrées et design sobre et élégant.", category: "Matériel" },
+  { title: "Améliorer sa volée au padel : nos astuces", content: "La volée est un coup fondamental au padel. Pour la maîtriser, travaillez votre placement au filet, gardez la raquette haute et anticipez la trajectoire de la balle. La régularité prime sur la puissance.", category: "Conseil" },
+];
+
 async function genererActus() {
-  console.log('Robot IA : génération des actus...');
+  console.log('Robot : rotation des actus padel...');
   try {
-    const today = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-    const msg = await anthropic.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1000,
-      messages: [{
-        role: 'user',
-        content: `Tu es rédacteur pour Padel X, boutique padel premium française. Aujourd'hui : ${today}. Génère 4 actualités padel courtes et variées. Réponds UNIQUEMENT en JSON valide sans markdown : [{"title":"titre","content":"2-3 phrases.","category":"Tournoi"},{"title":"...","content":"...","category":"Matériel"},{"title":"...","content":"...","category":"Conseil"},{"title":"...","content":"...","category":"Tendance"}]`
-      }]
-    });
-    const actus = JSON.parse(msg.content[0].text.trim());
-    await supabase.from('news').delete().lt('created_at', new Date(Date.now() - 25 * 3600000).toISOString());
-    for (const actu of actus) await supabase.from('news').insert([actu]);
-    console.log(`OK : ${actus.length} actus générées`);
+    // Choisir 4 actus différentes selon le jour
+    const dayIndex = new Date().getDate();
+    const selected = [];
+    for (let i = 0; i < 4; i++) {
+      selected.push(ACTUS_POOL[(dayIndex + i * 4) % ACTUS_POOL.length]);
+    }
+
+    // Supprimer les vieilles actus
+    await supabase.from('news').delete()
+      .lt('created_at', new Date(Date.now() - 25 * 3600000).toISOString());
+
+    // Insérer les nouvelles
+    for (const actu of selected) {
+      await supabase.from('news').insert([actu]);
+    }
+    console.log(`OK : ${selected.length} actus publiées`);
   } catch (e) {
     console.error('Erreur actus:', e.message);
   }
