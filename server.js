@@ -3,6 +3,9 @@ const stripe   = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const path     = require('path');
 const fs       = require('fs');
 const { createClient } = require('@supabase/supabase-js');
+const multer   = require('multer');
+
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
 
 const app = express();
 app.use(express.json());
@@ -21,6 +24,24 @@ app.get('/', (req, res) => {
 
 app.get('/api/config', (req, res) => {
   res.json({ stripePublicKey: process.env.STRIPE_PUBLIC_KEY || '', baseUrl: process.env.BASE_URL || '' });
+});
+
+// UPLOAD IMAGE
+app.post('/api/upload', upload.single('image'), async (req, res) => {
+  try {
+    const file = req.file;
+    if (!file) return res.status(400).json({ error: 'Aucun fichier' });
+    const ext = file.mimetype.split('/')[1];
+    const filename = `product_${Date.now()}.${ext}`;
+    const { error } = await supabase.storage
+      .from('images')
+      .upload(filename, file.buffer, { contentType: file.mimetype, upsert: true });
+    if (error) return res.status(500).json({ error: error.message });
+    const { data } = supabase.storage.from('images').getPublicUrl(filename);
+    res.json({ url: data.publicUrl });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 // PRODUITS
