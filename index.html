@@ -1140,31 +1140,46 @@ function pdAddToCart(id) {
   openCart();
 }
 
-// ══ IMAGE UPLOAD ══
-function previewImg(input) {
+// ══ IMAGE UPLOAD — Direct Supabase Storage ══
+const SUPABASE_URL = 'https://rxnqrhzojozyajxwpcss.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4bnFyaHpvam96eWFqeHdwY3NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwMzEyNjksImV4cCI6MjA4ODYwNzI2OX0.i3HvKBXfZ_Fz7KmcWZ-aakjBJN_52_dek_r9Eg7OMho';
+
+async function previewImg(input) {
   const file = input.files[0]; if (!file) return;
+  // Aperçu local
   const reader = new FileReader();
   reader.onload = e => {
     document.getElementById('imgPreview').src = e.target.result;
     document.getElementById('imgPreviewWrap').style.display = 'block';
   };
   reader.readAsDataURL(file);
+  // Upload direct vers Supabase Storage
   document.getElementById('imgUploadStatus').textContent = 'Upload en cours...';
   document.getElementById('pImgUrl').value = '';
-  const formData = new FormData();
-  formData.append('image', file);
-  fetch('/api/upload', { method: 'POST', body: formData })
-    .then(r => r.json())
-    .then(data => {
-      if (data.url) {
-        document.getElementById('pImgUrl').value = data.url;
-        document.getElementById('imgUploadStatus').textContent = '✓ Image uploadée';
-      } else {
-        document.getElementById('imgUploadStatus').textContent = 'Erreur : ' + (data.error || 'inconnue');
-      }
-    })
-    .catch(() => { document.getElementById('imgUploadStatus').textContent = 'Erreur upload'; });
+  try {
+    const ext = file.name.split('.').pop();
+    const filename = `product_${Date.now()}.${ext}`;
+    const res = await fetch(`${SUPABASE_URL}/storage/v1/object/images/${filename}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_ANON}`,
+        'Content-Type': file.type,
+        'x-upsert': 'true'
+      },
+      body: file
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || res.status);
+    }
+    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/images/${filename}`;
+    document.getElementById('pImgUrl').value = publicUrl;
+    document.getElementById('imgUploadStatus').textContent = '✓ Image uploadée';
+  } catch(e) {
+    document.getElementById('imgUploadStatus').textContent = 'Erreur : ' + e.message;
+  }
 }
+
 function clearImg() {
   document.getElementById('pImgFile').value = '';
   document.getElementById('imgPreview').src = '';
