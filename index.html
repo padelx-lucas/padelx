@@ -639,6 +639,62 @@ footer{background:#050505;padding:60px 0 0;}
 @media(max-width:480px){
   .news-grid{grid-template-columns:1fr;}
 }
+/* ══ HAMBURGER MOBILE ══ */
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px;}
+.hamburger span{display:block;width:22px;height:2px;background:var(--k);transition:.3s;}
+.hamburger.on span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
+.hamburger.on span:nth-child(2){opacity:0;}
+.hamburger.on span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
+.mobile-menu{display:none;position:fixed;inset:0;top:64px;background:#fff;z-index:998;padding:24px;overflow-y:auto;}
+.mobile-menu.on{display:block;}
+.mobile-menu a{display:block;font-family:'Oswald',sans-serif;font-size:22px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--k);padding:16px 0;border-bottom:1px solid var(--border);text-decoration:none;}
+.mobile-menu a:hover{color:var(--r);}
+.mobile-menu .msub{font-size:13px;font-family:'Inter',sans-serif;font-weight:400;letter-spacing:1px;color:var(--muted);padding:10px 0 10px 16px;border-bottom:1px solid var(--border);}
+@media(max-width:768px){
+  .hamburger{display:flex;}
+  .nav-links{display:none!important;}
+  .nav-btn{display:none!important;}
+}
+
+/* ══ BARRE DE RECHERCHE ══ */
+.search-bar{display:flex;align-items:center;gap:0;border:1.5px solid var(--border);background:#fff;transition:border-color .2s;margin-bottom:24px;}
+.search-bar:focus-within{border-color:var(--k);}
+.search-bar input{flex:1;border:none;outline:none;padding:11px 16px;font-size:13px;background:transparent;color:var(--k);}
+.search-bar button{background:var(--k);color:#fff;border:none;padding:11px 16px;cursor:pointer;font-size:14px;transition:background .2s;}
+.search-bar button:hover{background:var(--r);}
+.search-bar .clear-btn{background:none;color:var(--muted);border:none;padding:11px 12px;cursor:pointer;font-size:14px;}
+
+/* ══ AVIS CLIENTS ══ */
+.stars{display:flex;gap:2px;margin-bottom:8px;}
+.star{color:#f5a623;font-size:14px;}
+.star.empty{color:#ddd;}
+.pcard-stars{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
+.pcard-stars-count{font-size:11px;color:var(--muted);}
+.reviews-section{border-top:1px solid var(--border);padding-top:20px;margin-top:16px;}
+.review-item{padding:14px 0;border-bottom:1px solid var(--border);}
+.review-item:last-child{border-bottom:none;}
+.review-header{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.review-name{font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;}
+.review-date{font-size:11px;color:var(--muted);}
+.review-text{font-size:13px;color:var(--muted);line-height:1.7;}
+.add-review-btn{width:100%;background:var(--g);border:1.5px solid var(--border);padding:12px;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-top:16px;transition:.2s;}
+.add-review-btn:hover{background:var(--k);color:#fff;}
+.rating-input{display:flex;gap:4px;margin-bottom:12px;}
+.rating-input span{font-size:24px;cursor:pointer;color:#ddd;transition:.2s;}
+.rating-input span.on, .rating-input span:hover{color:#f5a623;}
+
+/* ══ FILTRE PRIX ══ */
+.price-filter{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.price-filter label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.price-filter input[type=range]{width:120px;accent-color:var(--k);}
+.price-filter .price-val{font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;color:var(--k);min-width:60px;}
+.sort-select{border:1.5px solid var(--border);background:#fff;color:var(--k);padding:8px 12px;font-size:11px;letter-spacing:1px;outline:none;cursor:pointer;}
+
+/* ══ WHATSAPP ══ */
+.whatsapp-btn{position:fixed;bottom:24px;right:24px;width:56px;height:56px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 20px rgba(37,211,102,.4);z-index:9000;cursor:pointer;transition:transform .2s,box-shadow .2s;text-decoration:none;}
+.whatsapp-btn:hover{transform:scale(1.1);box-shadow:0 6px 28px rgba(37,211,102,.5);}
+.whatsapp-tooltip{position:absolute;right:66px;background:#0a0a0a;color:#fff;font-size:11px;letter-spacing:1px;white-space:nowrap;padding:6px 12px;opacity:0;transition:opacity .2s;pointer-events:none;}
+.whatsapp-btn:hover .whatsapp-tooltip{opacity:1;}
 </style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-FZM67E3NWH"></script>
@@ -769,9 +825,27 @@ footer{background:#050505;padding:60px 0 0;}
       <button class="cart-btn" onclick="openCart()">
         🛒<span class="badge" id="cartBadge">0</span>
       </button>
+      <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </div>
 </nav>
+
+<!-- MENU MOBILE -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#" onclick="filter('all');goto('prods');closeMobileMenu();return false;">Boutique</a>
+  <a href="#" class="msub" onclick="filter('Raquettes');goto('prods');closeMobileMenu();return false;">🏓 Raquettes</a>
+  <a href="#" class="msub" onclick="filter('Chaussures');goto('prods');closeMobileMenu();return false;">👟 Chaussures</a>
+  <a href="#" class="msub" onclick="filter('Tenues');goto('prods');closeMobileMenu();return false;">👕 Tenues</a>
+  <a href="#" class="msub" onclick="filter('Balles');goto('prods');closeMobileMenu();return false;">🎾 Balles</a>
+  <a href="#" class="msub" onclick="filter('Sacs');goto('prods');closeMobileMenu();return false;">🎒 Sacs</a>
+  <a href="#" class="msub" onclick="filter('Accessoires');goto('prods');closeMobileMenu();return false;">🧢 Accessoires</a>
+  <a href="#" onclick="goto('conseils');closeMobileMenu();return false;">Conseils</a>
+  <a href="#" onclick="goto('actus');closeMobileMenu();return false;">Actus</a>
+  <a href="#" onclick="openModal('aboutModal');closeMobileMenu();return false;">À propos</a>
+  <a href="#" onclick="openLogin();closeMobileMenu();return false;">Connexion</a>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -864,6 +938,25 @@ footer{background:#050505;padding:60px 0 0;}
         <button class="fpill" onclick="filter('Sacs')">Sacs</button>
         <button class="fpill" onclick="filter('Accessoires')">Accessoires</button>
       </div>
+    </div>
+    <!-- Barre de recherche + Filtre prix + Tri -->
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+      <div class="search-bar" style="flex:1;min-width:200px;">
+        <input type="text" id="searchInput" placeholder="Rechercher un produit..." oninput="searchProds(this.value)"/>
+        <button class="clear-btn" onclick="clearSearch()">✕</button>
+        <button onclick="searchProds(document.getElementById('searchInput').value)">🔍</button>
+      </div>
+      <div class="price-filter">
+        <label>Prix max</label>
+        <input type="range" id="priceRange" min="0" max="500" value="500" step="10" oninput="filterPrice(this.value)"/>
+        <span class="price-val" id="priceVal">500 €</span>
+      </div>
+      <select class="sort-select" id="sortSelect" onchange="sortProds(this.value)">
+        <option value="default">Trier par</option>
+        <option value="price-asc">Prix croissant</option>
+        <option value="price-desc">Prix décroissant</option>
+        <option value="name">Nom A-Z</option>
+      </select>
     </div>
     <div class="prods-grid" id="prodsGrid"></div>
   </div>
@@ -1132,15 +1225,37 @@ function logout() {
 // ══ PRODUITS ══
 function renderProds() {
   const grid = document.getElementById('prodsGrid');
-  const list = curCat === 'all' ? products : products.filter(p => p.category === curCat);
+  let list = curCat === 'all' ? [...products] : products.filter(p => p.category === curCat);
+
+  // Filtre recherche
+  if (searchQuery) {
+    list = list.filter(p =>
+      p.name.toLowerCase().includes(searchQuery) ||
+      p.brand.toLowerCase().includes(searchQuery) ||
+      (p.description || '').toLowerCase().includes(searchQuery)
+    );
+  }
+
+  // Filtre prix
+  list = list.filter(p => p.price <= maxPrice);
+
+  // Tri
+  if (sortMode === 'price-asc') list.sort((a,b) => a.price - b.price);
+  else if (sortMode === 'price-desc') list.sort((a,b) => b.price - a.price);
+  else if (sortMode === 'name') list.sort((a,b) => a.name.localeCompare(b.name));
+
   if (!list.length) {
     grid.innerHTML = `<div class="empty-state">
-      <h3>${isAdmin ? '+ Ajouter des produits' : 'Bientôt disponible'}</h3>
-      <p>${isAdmin ? 'Clique sur « Ajouter produit » dans la barre admin' : "Les produits arrivent bientôt"}</p>
+      <h3>${searchQuery ? 'Aucun résultat pour "'+searchQuery+'"' : isAdmin ? '+ Ajouter des produits' : 'Bientôt disponible'}</h3>
+      <p>${searchQuery ? 'Essaie un autre mot-clé' : isAdmin ? 'Clique sur « Ajouter produit » dans la barre admin' : "Les produits arrivent bientôt"}</p>
     </div>`;
     return;
   }
-  grid.innerHTML = list.map(p => `
+
+  grid.innerHTML = list.map(p => {
+    const reviews = getProductReviews(p.id);
+    const avg = reviews.length ? Math.round(reviews.reduce((s,r) => s+r.rating, 0) / reviews.length) : 0;
+    return `
     <div class="pcard">
       ${p.badge ? `<div class="pbadge pbadge-${p.badge}">${p.badge==='new'?'NOUVEAU':p.badge==='sale'?'PROMO':'TOP'}</div>` : ''}
       <div class="pcard-admin">
@@ -1153,6 +1268,7 @@ function renderProds() {
       <div class="pcard-body" onclick="openProdDetail('${p.id}')">
         <div class="pcard-brand">${p.brand.toUpperCase()}</div>
         <div class="pcard-name">${p.name}</div>
+        ${reviews.length ? `<div class="pcard-stars">${renderStars(avg)}<span class="pcard-stars-count">(${reviews.length})</span></div>` : ''}
         ${p.description ? `<div class="pcard-desc">${p.description}</div>` : ''}
         <div class="pcard-foot">
           <div>
@@ -1162,7 +1278,8 @@ function renderProds() {
           <button class="pcard-add" onclick="event.stopPropagation();addToCart('${p.id}',1)">+</button>
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function filter(cat) {
@@ -1178,6 +1295,8 @@ function filter(cat) {
 function openProdDetail(id) {
   const p = products.find(x => x.id === id); if (!p) return;
   pdQty = 1;
+  const reviews = getProductReviews(p.id);
+  const avg = reviews.length ? Math.round(reviews.reduce((s,r) => s+r.rating, 0) / reviews.length) : 0;
   document.getElementById('pdGrid').innerHTML = `
     <div class="pd-img">
       ${p.image_url ? `<img src="${p.image_url}" alt="${p.name}"/>` : `<span>${p.emoji || EMOJIS[p.category] || '📦'}</span>`}
@@ -1205,6 +1324,21 @@ function openProdDetail(id) {
         <button class="pd-add-btn" onclick="pdAddToCart('${p.id}')">
           🛒 Ajouter au panier — <span id="pdTotalPrice">${fmt(p.price)}</span>
         </button>
+        <div class="reviews-section">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">Avis clients (${reviews.length})</div>
+            <button class="add-review-btn" style="width:auto;padding:6px 14px;font-size:9px;" onclick="openReviewModal('${p.id}','${p.name}')">+ Laisser un avis</button>
+          </div>
+          ${reviews.length ? reviews.slice(0,3).map(r => `
+            <div class="review-item">
+              <div class="review-header">
+                <div class="stars">${renderStars(r.rating,'12px')}</div>
+                <div class="review-name">${r.name}</div>
+                <div class="review-date">${r.date}</div>
+              </div>
+              <div class="review-text">${r.text}</div>
+            </div>`).join('') : '<div style="font-size:12px;color:var(--muted);padding:12px 0;">Sois le premier à laisser un avis !</div>'}
+        </div>
       </div>
     </div>`;
   window._pdPrice = p.price;
@@ -1222,7 +1356,95 @@ function pdAddToCart(id) {
   openCart();
 }
 
-// ══ IMAGE UPLOAD — Direct Supabase Storage ══
+// ══ HAMBURGER MOBILE ══
+function toggleMobileMenu() {
+  document.getElementById('hamburgerBtn').classList.toggle('on');
+  document.getElementById('mobileMenu').classList.toggle('on');
+  document.body.style.overflow = document.getElementById('mobileMenu').classList.contains('on') ? 'hidden' : '';
+}
+function closeMobileMenu() {
+  document.getElementById('hamburgerBtn').classList.remove('on');
+  document.getElementById('mobileMenu').classList.remove('on');
+  document.body.style.overflow = '';
+}
+
+// ══ RECHERCHE ══
+let searchQuery = '';
+let maxPrice = 500;
+let sortMode = 'default';
+
+function searchProds(val) {
+  searchQuery = val.toLowerCase().trim();
+  renderProds();
+}
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  searchQuery = '';
+  renderProds();
+}
+
+// ══ FILTRE PRIX ══
+function filterPrice(val) {
+  maxPrice = parseInt(val);
+  document.getElementById('priceVal').textContent = val + ' €';
+  renderProds();
+}
+
+// ══ TRI ══
+function sortProds(val) {
+  sortMode = val;
+  renderProds();
+}
+
+// ══ AVIS CLIENTS ══
+let currentReviewProdId = null;
+let currentRating = 5;
+const REVIEWS_KEY = 'padelx_reviews';
+
+function getReviews() {
+  try { return JSON.parse(localStorage.getItem(REVIEWS_KEY) || '{}'); } catch(e) { return {}; }
+}
+function saveReviews(reviews) {
+  localStorage.setItem(REVIEWS_KEY, JSON.stringify(reviews));
+}
+function getProductReviews(id) {
+  return getReviews()[id] || [];
+}
+function renderStars(rating, size='14px') {
+  return [1,2,3,4,5].map(i => `<span class="star${i>rating?' empty':''}" style="font-size:${size}">★</span>`).join('');
+}
+function openReviewModal(id, name) {
+  currentReviewProdId = id;
+  currentRating = 5;
+  document.getElementById('reviewProdName').textContent = name;
+  document.getElementById('reviewName').value = '';
+  document.getElementById('reviewText').value = '';
+  setRating(5);
+  openModal('reviewModal');
+}
+function setRating(n) {
+  currentRating = n;
+  document.querySelectorAll('#ratingInput span').forEach((s,i) => {
+    s.classList.toggle('on', i < n);
+  });
+}
+function submitReview() {
+  const name = document.getElementById('reviewName').value.trim();
+  const text = document.getElementById('reviewText').value.trim();
+  if (!name || !text) { toast('Remplis tous les champs'); return; }
+  const reviews = getReviews();
+  if (!reviews[currentReviewProdId]) reviews[currentReviewProdId] = [];
+  reviews[currentReviewProdId].unshift({
+    name, text, rating: currentRating,
+    date: new Date().toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' })
+  });
+  saveReviews(reviews);
+  closeModal('reviewModal');
+  toast('Avis publié ✓');
+  openProdDetail(currentReviewProdId);
+}
+
+
 const SUPABASE_URL = 'https://rxnqrhzojozyajxwpcss.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4bnFyaHpvam96eWFqeHdwY3NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwMzEyNjksImV4cCI6MjA4ODYwNzI2OX0.i3HvKBXfZ_Fz7KmcWZ-aakjBJN_52_dek_r9Eg7OMho';
 
@@ -1532,6 +1754,34 @@ async function genererActusNow() {
 }
 
 </script>
+
+<!-- WHATSAPP -->
+<a class="whatsapp-btn" href="https://wa.me/33602457523?text=Bonjour%20Padel%20X%2C%20j'ai%20une%20question%20sur%20votre%20boutique." target="_blank">
+  💬<span class="whatsapp-tooltip">Contacter le SAV</span>
+</a>
+
+<!-- MODAL AVIS -->
+<div class="modal-bg" id="reviewModal">
+  <div class="modal" style="max-width:480px;">
+    <button class="modal-x" onclick="closeModal('reviewModal')">✕</button>
+    <div class="modal-label">Avis client</div>
+    <h2 class="modal-title">Laisser un avis</h2>
+    <p class="modal-sub" id="reviewProdName"></p>
+    <div class="mfield">
+      <label>Votre note</label>
+      <div class="rating-input" id="ratingInput">
+        <span onclick="setRating(1)">★</span>
+        <span onclick="setRating(2)">★</span>
+        <span onclick="setRating(3)">★</span>
+        <span onclick="setRating(4)">★</span>
+        <span onclick="setRating(5)">★</span>
+      </div>
+    </div>
+    <div class="mfield"><label>Votre prénom</label><input type="text" id="reviewName" placeholder="Ex: Thomas"/></div>
+    <div class="mfield"><label>Votre avis</label><textarea id="reviewText" placeholder="Partagez votre expérience avec ce produit..."></textarea></div>
+    <button class="btn-full" onclick="submitReview()">Publier mon avis →</button>
+  </div>
+</div>
 
 <!-- MODAL DETAIL PRODUIT -->
 <div class="modal-bg" id="prodDetailModal">
