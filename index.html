@@ -695,6 +695,17 @@ footer{background:#050505;padding:60px 0 0;}
 .whatsapp-btn:hover{transform:scale(1.1);box-shadow:0 6px 28px rgba(37,211,102,.5);}
 .whatsapp-tooltip{position:absolute;right:66px;background:#0a0a0a;color:#fff;font-size:11px;letter-spacing:1px;white-space:nowrap;padding:6px 12px;opacity:0;transition:opacity .2s;pointer-events:none;}
 .whatsapp-btn:hover .whatsapp-tooltip{opacity:1;}
+/* ══ COOKIE BANNER ══ */
+.cookie-banner{position:fixed;bottom:0;left:0;right:0;background:#0a0a0a;color:#fff;z-index:99998;padding:20px 40px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;border-top:3px solid #D0021B;transform:translateY(100%);transition:transform .4s ease;}
+.cookie-banner.show{transform:translateY(0);}
+.cookie-text{font-size:12px;line-height:1.7;color:rgba(255,255,255,.8);flex:1;min-width:200px;}
+.cookie-text a{color:#D0021B;text-decoration:underline;cursor:pointer;}
+.cookie-actions{display:flex;gap:10px;flex-shrink:0;}
+.cookie-accept{background:#D0021B;color:#fff;border:none;padding:10px 24px;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:.2s;}
+.cookie-accept:hover{background:#b00218;}
+.cookie-refuse{background:none;color:rgba(255,255,255,.6);border:1.5px solid rgba(255,255,255,.2);padding:10px 24px;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:.2s;}
+.cookie-refuse:hover{border-color:#fff;color:#fff;}
+@media(max-width:768px){.cookie-banner{padding:16px;flex-direction:column;}.cookie-actions{width:100%;}.cookie-accept,.cookie-refuse{flex:1;text-align:center;}}
 </style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-FZM67E3NWH"></script>
@@ -1050,7 +1061,7 @@ footer{background:#050505;padding:60px 0 0;}
     </div>
     <div class="fcol"><div class="fcol-title">Boutique</div><ul><li><a href="#">Raquettes</a></li><li><a href="#">Balles</a></li><li><a href="#">Chaussures</a></li><li><a href="#">Tenues</a></li><li><a href="#">Sacs</a></li></ul></div>
     <div class="fcol"><div class="fcol-title">Infos</div><ul><li><a href="#" onclick="openModal('aboutModal');return false;">À propos</a></li><li><a href="#">Blog</a></li><li><a href="#">Guide tailles</a></li><li><a href="#">FAQ</a></li></ul></div>
-    <div class="fcol"><div class="fcol-title">Service</div><ul><li><a href="#">Livraison</a></li><li><a href="#">Retours</a></li><li><a href="#" onclick="openModal('contactModal');return false;">Contact</a></li><li><a href="#" onclick="openModal('mentionsModal');return false;">Mentions légales</a></li><li><a href="#" onclick="openLogin();return false;" >Connexion</a></li></ul></div>
+    <div class="fcol"><div class="fcol-title">Service</div><ul><li><a href="#">Livraison</a></li><li><a href="#">Retours</a></li><li><a href="#" onclick="openModal('contactModal');return false;">Contact</a></li><li><a href="#" onclick="openModal('mentionsModal');return false;">Mentions légales</a></li><li><a href="#" onclick="openModal('cgvModal');return false;">CGV</a></li><li><a href="#" onclick="openModal('privacyModal');return false;">Confidentialité</a></li><li><a href="#" onclick="openLogin();return false;">Connexion</a></li></ul></div>
   </div>
   <div class="footer-bottom">
     <div class="footer-copy">© 2025 PADEL X — Tous droits réservés</div>
@@ -1877,4 +1888,66 @@ async function genererActusNow() {
         <span style="font-size:24px;">📍</span>
         <div>
           <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:4px;">Localisation</div>
-          <div style="font-family
+          <div style="font-family          <div style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;color:#0a0a0a;">Castelginest, France</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COOKIE BANNER RGPD -->
+<div class="cookie-banner" id="cookieBanner">
+  <div class="cookie-text">
+    🍪 Nous utilisons des cookies pour améliorer votre expérience, analyser le trafic (Google Analytics) et sécuriser les paiements (Stripe). Conformément au RGPD, vous pouvez accepter ou refuser les cookies non essentiels. <a onclick="openModal('privacyModal')" style="color:#D0021B;cursor:pointer;text-decoration:underline;">En savoir plus</a>
+  </div>
+  <div class="cookie-actions">
+    <button class="cookie-refuse" onclick="refuseCookies()">Refuser</button>
+    <button class="cookie-accept" onclick="acceptCookies()">Accepter tout</button>
+  </div>
+</div>
+
+<!-- MODAL POLITIQUE DE CONFIDENTIALITÉ -->
+<div class="modal-bg" id="privacyModal">
+  <div class="modal wide" style="max-width:700px;">
+    <button class="modal-x" onclick="closeModal('privacyModal')">✕</button>
+    <div class="modal-label">RGPD</div>
+    <h2 class="modal-title">Politique de confidentialité</h2>
+    <div style="font-size:13px;line-height:1.9;color:#555;margin-top:20px;display:flex;flex-direction:column;gap:20px;">
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">1. Responsable du traitement</strong><br/>Lucas — Padel X, Castelginest, France. Email : alxdlucaspro1@gmail.com</div>
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">2. Données collectées</strong><br/>Commandes : nom, email, adresse de livraison. Navigation : données anonymisées via Google Analytics. Paiement : traité par Stripe — aucune donnée bancaire stockée par Padel X.</div>
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">3. Cookies utilisés</strong><br/><strong>Essentiels</strong> : panier, session.<br/><strong>Analytiques</strong> (avec consentement) : Google Analytics (G-FZM67E3NWH).<br/><strong>Paiement</strong> (avec consentement) : Stripe.</div>
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">4. Vos droits RGPD</strong><br/>Accès, rectification, effacement, opposition, portabilité.<br/>Contact : alxdlucaspro1@gmail.com — Réponse sous 30 jours.<br/>Réclamation possible auprès de la CNIL (cnil.fr).</div>
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">5. Conservation des données</strong><br/>Données de commande : 3 ans. Cookies analytiques : 13 mois.</div>
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">6. Transferts hors UE</strong><br/>Google Analytics et Stripe peuvent traiter des données hors UE dans le cadre de garanties appropriées (clauses contractuelles types UE).</div>
+    </div>
+    <button class="btn-full" style="margin-top:24px;" onclick="acceptCookies();closeModal('privacyModal')">Accepter et fermer →</button>
+  </div>
+</div>
+
+<script>
+// ══ COOKIES RGPD ══
+function initCookies() {
+  const consent = localStorage.getItem('padelx_cookie_consent');
+  if (!consent) {
+    setTimeout(() => document.getElementById('cookieBanner').classList.add('show'), 1500);
+  } else if (consent === 'refused') {
+    disableAnalytics();
+  }
+}
+function acceptCookies() {
+  localStorage.setItem('padelx_cookie_consent', 'accepted');
+  document.getElementById('cookieBanner').classList.remove('show');
+}
+function refuseCookies() {
+  localStorage.setItem('padelx_cookie_consent', 'refused');
+  document.getElementById('cookieBanner').classList.remove('show');
+  disableAnalytics();
+}
+function disableAnalytics() {
+  window['ga-disable-G-FZM67E3NWH'] = true;
+}
+document.addEventListener('DOMContentLoaded', initCookies);
+</script>
+
+</body>
+</html>
