@@ -3,7 +3,49 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>PADEL X — Équipement Premium</title>
+
+<!-- SEO Principal -->
+<title>Padel X — Boutique Padel Premium | Raquettes, Chaussures, Tenues</title>
+<meta name="description" content="Padel X, la boutique padel premium en France. Raquettes Bullpadel, Head, Babolat, Wilson, Nox. Livraison en 7 jours. Chaussures, tenues et accessoires padel. Commandez sur padelx.fr."/>
+<meta name="keywords" content="boutique padel, raquette padel, chaussures padel, padel france, bullpadel, head padel, babolat padel, wilson padel, achat padel, équipement padel, padel premium"/>
+<meta name="author" content="Padel X"/>
+<meta name="robots" content="index, follow"/>
+<link rel="canonical" href="https://www.padelx.fr"/>
+
+<!-- Open Graph (Facebook / Instagram) -->
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://www.padelx.fr"/>
+<meta property="og:title" content="Padel X — Boutique Padel Premium France"/>
+<meta property="og:description" content="Raquettes, chaussures, tenues et accessoires padel. Les meilleures marques livrées en 7 jours. Bullpadel, Head, Babolat, Wilson, Nox, Adidas."/>
+<meta property="og:image" content="https://www.padelx.fr/og-image.jpg"/>
+<meta property="og:locale" content="fr_FR"/>
+<meta property="og:site_name" content="Padel X"/>
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Padel X — Boutique Padel Premium France"/>
+<meta name="twitter:description" content="Raquettes, chaussures, tenues padel. Livraison 7 jours. padelx.fr"/>
+
+<!-- Schema.org — Boutique en ligne -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Store",
+  "name": "Padel X",
+  "url": "https://www.padelx.fr",
+  "description": "Boutique padel premium en France. Raquettes, chaussures, tenues et accessoires des meilleures marques.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Castelginest",
+    "addressCountry": "FR"
+  },
+  "email": "alxdlucaspro1@gmail.com",
+  "priceRange": "€€",
+  "currenciesAccepted": "EUR",
+  "paymentAccepted": "Credit Card",
+  "openingHours": "Mo-Su 00:00-24:00"
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
@@ -557,8 +599,15 @@ footer{background:#050505;padding:60px 0 0;}
 .loader-tag{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.25);animation:fadeIn .6s ease .8s both;}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 /* ══════════════════════════════
-   ACTUS & CONSEILS
+   MENU DÉROULANT
 ══════════════════════════════ */
+.nav-item{position:relative;}
+.nav-item:hover .dropdown{display:block;}
+.dropdown{display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--border);border-top:2px solid var(--r);min-width:180px;z-index:999;box-shadow:0 8px 32px rgba(0,0,0,.1);}
+.dropdown a{display:block;padding:12px 20px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);transition:all .15s;border-bottom:1px solid var(--border);white-space:nowrap;}
+.dropdown a:last-child{border-bottom:none;}
+.dropdown a:hover{color:var(--k);background:var(--g);padding-left:26px;}
+.nav-item > a::after{content:' ▾';font-size:8px;opacity:.5;}
 .news-section{padding:80px 0;background:var(--panel);}
 .conseils-section{padding:80px 0;background:var(--g);}
 .sec-tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--r);margin-bottom:12px;}
@@ -673,17 +722,50 @@ footer{background:#050505;padding:60px 0 0;}
 <!-- NAV -->
 <nav>
   <div class="nav-inner">
-    <div class="logo">PADEL<span>X</span></div>
+    <div class="logo" onclick="goto('hero')" style="cursor:pointer;">PADEL<span>X</span></div>
     <ul class="nav-links">
-      <li><a href="#" onclick="filter('Raquettes');goto('prods');return false;">Raquettes</a></li>
-      <li><a href="#" onclick="filter('Tenues');goto('prods');return false;">Tenues</a></li>
-      <li><a href="#" onclick="filter('Chaussures');goto('prods');return false;">Chaussures</a></li>
-      <li><a href="#" onclick="filter('Accessoires');goto('prods');return false;">Accessoires</a></li>
-      <li><a href="#" class="sale">Soldes</a></li>
+
+      <!-- Boutique dropdown -->
+      <li class="nav-item">
+        <a href="#" onclick="filter('all');goto('prods');return false;">Boutique</a>
+        <div class="dropdown">
+          <a href="#" onclick="filter('Raquettes');goto('prods');return false;">🏓 Raquettes</a>
+          <a href="#" onclick="filter('Chaussures');goto('prods');return false;">👟 Chaussures</a>
+          <a href="#" onclick="filter('Tenues');goto('prods');return false;">👕 Tenues</a>
+          <a href="#" onclick="filter('Balles');goto('prods');return false;">🎾 Balles</a>
+          <a href="#" onclick="filter('Sacs');goto('prods');return false;">🎒 Sacs</a>
+          <a href="#" onclick="filter('Accessoires');goto('prods');return false;">🧢 Accessoires</a>
+          <a href="#" onclick="filter('all');goto('prods');return false;">Tout voir →</a>
+        </div>
+      </li>
+
+      <!-- Marques dropdown -->
+      <li class="nav-item">
+        <a href="#">Marques</a>
+        <div class="dropdown">
+          <a href="#" onclick="goto('prods');return false;">Bullpadel</a>
+          <a href="#" onclick="goto('prods');return false;">Head</a>
+          <a href="#" onclick="goto('prods');return false;">Babolat</a>
+          <a href="#" onclick="goto('prods');return false;">Wilson</a>
+          <a href="#" onclick="goto('prods');return false;">Nox</a>
+          <a href="#" onclick="goto('prods');return false;">Adidas</a>
+        </div>
+      </li>
+
+      <!-- Conseils dropdown -->
+      <li class="nav-item">
+        <a href="#" onclick="goto('conseils');return false;">Conseils</a>
+        <div class="dropdown">
+          <a href="#" onclick="goto('conseils');return false;">Technique</a>
+          <a href="#" onclick="goto('actus');return false;">Actus padel</a>
+        </div>
+      </li>
+
+      <li><a href="#" class="sale" style="letter-spacing:2px;" onclick="filter('sale');goto('prods');return false;">Soldes</a></li>
       <li><a href="#" onclick="openModal('aboutModal');return false;">À propos</a></li>
     </ul>
     <div class="nav-actions">
-      <button class="nav-btn" onclick="openLogin()">Connexion/button>
+      <button class="nav-btn" onclick="openLogin()">Connexion</button>
       <button class="cart-btn" onclick="openCart()">
         🛒<span class="badge" id="cartBadge">0</span>
       </button>
