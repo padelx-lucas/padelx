@@ -706,6 +706,40 @@ footer{background:#050505;padding:60px 0 0;}
 .cookie-refuse{background:none;color:rgba(255,255,255,.6);border:1.5px solid rgba(255,255,255,.2);padding:10px 24px;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:.2s;}
 .cookie-refuse:hover{border-color:#fff;color:#fff;}
 @media(max-width:768px){.cookie-banner{padding:16px;flex-direction:column;}.cookie-actions{width:100%;}.cookie-accept,.cookie-refuse{flex:1;text-align:center;}}
+/* ══ PACKS ══ */
+.packs-section{padding:80px 0;background:var(--k);}
+.packs-section .sec-tag{color:var(--r);}
+.packs-section .sec-title{color:#fff;}
+.packs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:48px;}
+.pack-card{background:#111;border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;position:relative;transition:transform .25s,box-shadow .25s;}
+.pack-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.4);}
+.pack-card.featured{border-color:var(--r);border-width:2px;}
+.pack-featured-tag{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--r);color:#fff;font-size:9px;letter-spacing:3px;text-transform:uppercase;padding:5px 16px;white-space:nowrap;}
+.pack-header{padding:32px 28px 24px;border-bottom:1px solid rgba(255,255,255,.06);}
+.pack-level{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--r);margin-bottom:10px;}
+.pack-name{font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;text-transform:uppercase;color:#fff;letter-spacing:-1px;line-height:1;margin-bottom:12px;}
+.pack-desc{font-size:12px;color:rgba(255,255,255,.45);line-height:1.7;}
+.pack-price-row{display:flex;align-items:baseline;gap:10px;margin-top:16px;}
+.pack-price{font-family:'Oswald',sans-serif;font-size:42px;font-weight:700;color:#fff;line-height:1;}
+.pack-old-price{font-size:16px;color:rgba(255,255,255,.3);text-decoration:line-through;}
+.pack-saving{font-size:10px;letter-spacing:2px;background:var(--r);color:#fff;padding:3px 8px;text-transform:uppercase;}
+.pack-items{padding:24px 28px;flex:1;}
+.pack-items-title{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:14px;}
+.pack-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.pack-item:last-child{border-bottom:none;}
+.pack-item-ico{font-size:18px;width:28px;flex-shrink:0;}
+.pack-item-info{flex:1;}
+.pack-item-name{font-size:12px;color:rgba(255,255,255,.8);font-weight:500;}
+.pack-item-brand{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:1px;text-transform:uppercase;}
+.pack-cta{padding:0 28px 28px;}
+.pack-btn{width:100%;background:var(--r);color:#fff;border:none;padding:16px;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:background .2s;}
+.pack-btn:hover{background:#b0001a;}
+.pack-card.featured .pack-btn{background:var(--r);}
+.pack-guarantee{text-align:center;margin-top:40px;color:rgba(255,255,255,.25);font-size:11px;letter-spacing:2px;}
+@media(max-width:768px){
+  .packs-grid{grid-template-columns:1fr;}
+  .packs-section{padding:48px 0;}
+}
 </style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-FZM67E3NWH"></script>
@@ -858,16 +892,15 @@ footer{background:#050505;padding:60px 0 0;}
   <a href="#" onclick="openLogin();closeMobileMenu();return false;">Connexion</a>
 </div>
 
-<!-- HERO -->
-<section class="hero">
+<!-- HERO -->\n<section class="hero">
   <div class="hero-left">
     <div class="hero-bg-num">X</div>
     <div class="hero-tag">Collection 2025</div>
     <h1 class="hero-h1">Joue<br/>comme<br/><em>les pros</em></h1>
-    <p class="hero-sub">Équipement premium sélectionné pour les joueurs exigeants. Raquettes, tenues, chaussures — tout pour dominer le court.</p>
+    <p class="hero-sub">Équipements, conseils et actualités pour progresser au Padel.</p>
     <div class="hero-cta-row">
-      <button class="btn-red" onclick="goto('prods')">Voir la collection →</button>
-      <button class="btn-outline-w" onclick="goto('prods')">Guide d'achat</button>
+      <button class="btn-red" onclick="goto('packs')">Voir les packs joueurs →</button>
+      <button class="btn-outline-w" onclick="goto('prods')">Tous les produits</button>
     </div>
     <div class="hero-stats">
       <div><div class="hstat-n">7J</div><div class="hstat-l">Livraison max</div></div>
@@ -936,6 +969,26 @@ footer{background:#050505;padding:60px 0 0;}
 </section>
 
 <!-- PRODUITS -->
+<!-- ══ PACKS JOUEURS ══ -->
+<section class="packs-section reveal" id="packs">
+  <div class="section">
+    <div class="sec-head">
+      <div>
+        <div class="sec-tag">Sélection simplifiée</div>
+        <h2 class="sec-title">PACKS<br/><span style="color:var(--r)">JOUEURS</span></h2>
+        <p style="color:rgba(255,255,255,.4);font-size:13px;line-height:1.7;margin-top:12px;max-width:400px;">Tout ce qu'il te faut pour jouer, en un seul achat. Des packs conçus selon ton niveau pour simplifier ton choix.</p>
+      </div>
+      <div id="packsAdminBtn" style="display:none;">
+        <button class="btn-red" onclick="openAddPack()">+ Créer un pack</button>
+      </div>
+    </div>
+    <div class="packs-grid" id="packsGrid">
+      <!-- Packs chargés dynamiquement -->
+    </div>
+    <div class="pack-guarantee">✓ Livraison gratuite dès 79€ &nbsp;·&nbsp; ✓ 30 jours pour changer d'avis &nbsp;·&nbsp; ✓ Paiement 100% sécurisé</div>
+  </div>
+</section>
+
 <section class="prods-wrap reveal" id="prods">
   <div class="section">
     <div class="sec-head">
@@ -1177,6 +1230,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadProducts();
   await loadNews();
   await loadConseils();
+  await loadPacks();
   const obs = new IntersectionObserver(entries =>
     entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); }),
     { threshold: 0.07 }
@@ -1674,6 +1728,127 @@ function toast(msg) {
 }
 
 
+// ══ PACKS ══
+const DEFAULT_PACKS = [
+  {
+    id: 'pack_debutant',
+    name: 'Pack Débutant',
+    level: 'Débutant',
+    desc: 'Tout le nécessaire pour commencer le padel dans les meilleures conditions.',
+    price: 99,
+    old_price: 129,
+    featured: false,
+    items: [
+      { name: 'Raquette initiation', brand: 'Bullpadel', ico: '🏓' },
+      { name: 'Balles x3', brand: 'Head', ico: '🎾' },
+      { name: 'Overgrip x3', brand: 'Wilson', ico: '🖐️' },
+    ]
+  },
+  {
+    id: 'pack_intermediaire',
+    name: 'Pack Intermédiaire',
+    level: 'Intermédiaire',
+    desc: 'Pour les joueurs réguliers qui veulent progresser rapidement.',
+    price: 179,
+    old_price: 229,
+    featured: true,
+    items: [
+      { name: 'Raquette performance', brand: 'Head', ico: '🏓' },
+      { name: 'Chaussures padel', brand: 'Adidas', ico: '👟' },
+      { name: 'Balles x3', brand: 'Technifibre', ico: '🎾' },
+      { name: 'Grip pro', brand: 'Wilson', ico: '🖐️' },
+    ]
+  },
+  {
+    id: 'pack_avance',
+    name: 'Pack Avancé',
+    level: 'Avancé',
+    desc: 'L\'équipement complet des joueurs confirmés pour dominer le court.',
+    price: 299,
+    old_price: 389,
+    featured: false,
+    items: [
+      { name: 'Raquette carbone', brand: 'Bullpadel', ico: '🏓' },
+      { name: 'Chaussures pro', brand: 'Adidas', ico: '👟' },
+      { name: 'Tenue complète', brand: 'Babolat', ico: '👕' },
+      { name: 'Sac padel', brand: 'Wilson', ico: '🎒' },
+      { name: 'Balles x6', brand: 'Head', ico: '🎾' },
+    ]
+  }
+];
+
+let packs = [...DEFAULT_PACKS];
+
+async function loadPacks() {
+  try {
+    const res = await fetch('/api/packs');
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.length) packs = data;
+    }
+  } catch(e) { /* utilise packs par défaut */ }
+  if (isAdmin) document.getElementById('packsAdminBtn').style.display = 'block';
+  renderPacks();
+}
+
+function renderPacks() {
+  const grid = document.getElementById('packsGrid');
+  grid.innerHTML = packs.map(p => {
+    const saving = p.old_price ? Math.round(((p.old_price - p.price) / p.old_price) * 100) : 0;
+    return `
+    <div class="pack-card${p.featured ? ' featured' : ''}">
+      ${p.featured ? '<div class="pack-featured-tag">⭐ Le plus populaire</div>' : ''}
+      <div class="pack-header">
+        <div class="pack-level">${p.level}</div>
+        <div class="pack-name">${p.name}</div>
+        <div class="pack-desc">${p.desc}</div>
+        <div class="pack-price-row">
+          <div class="pack-price">${fmt(p.price)}</div>
+          ${p.old_price ? `<div class="pack-old-price">${fmt(p.old_price)}</div>` : ''}
+          ${saving > 0 ? `<div class="pack-saving">-${saving}%</div>` : ''}
+        </div>
+      </div>
+      <div class="pack-items">
+        <div class="pack-items-title">Contenu du pack</div>
+        ${p.items.map(item => `
+          <div class="pack-item">
+            <div class="pack-item-ico">${item.ico}</div>
+            <div class="pack-item-info">
+              <div class="pack-item-name">${item.name}</div>
+              <div class="pack-item-brand">${item.brand}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+      <div class="pack-cta">
+        <button class="pack-btn" onclick="addPackToCart('${p.id}')">
+          🛒 Précommander ce pack →
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function addPackToCart(packId) {
+  const pack = packs.find(p => p.id === packId);
+  if (!pack) return;
+  const ex = cart.find(c => c.id === packId);
+  if (ex) { ex.qty++; }
+  else {
+    cart.push({
+      id: packId,
+      name: pack.name,
+      brand: 'PADEL X',
+      price: pack.price,
+      qty: 1,
+      emoji: '📦',
+      image_url: null
+    });
+  }
+  updateCartUI();
+  openCart();
+  toast(pack.name + ' ajouté au panier ✓');
+}
+
 // ══ ACTUS ══
 async function loadNews() {
   try {
@@ -1913,10 +2088,10 @@ async function genererActusNow() {
     <div class="modal-label">RGPD</div>
     <h2 class="modal-title">Politique de confidentialité</h2>
     <div style="font-size:13px;line-height:1.9;color:#555;margin-top:20px;display:flex;flex-direction:column;gap:20px;">
-      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">1. Responsable du traitement</strong><br/>Lucas — Padel X, Castelginest, France. Email : alxdlucaspro1@gmail.com</div>
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">1. Responsable du traitement</strong><br/>Lucas — Padel X, Castelginest, France. Email : <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4c2d20342820392f2d3f3c3e237d0c2b212d2520622f2321">[email&#160;protected]</a></div>
       <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">2. Données collectées</strong><br/>Commandes : nom, email, adresse de livraison. Navigation : données anonymisées via Google Analytics. Paiement : traité par Stripe — aucune donnée bancaire stockée par Padel X.</div>
       <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">3. Cookies utilisés</strong><br/><strong>Essentiels</strong> : panier, session.<br/><strong>Analytiques</strong> (avec consentement) : Google Analytics (G-FZM67E3NWH).<br/><strong>Paiement</strong> (avec consentement) : Stripe.</div>
-      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">4. Vos droits RGPD</strong><br/>Accès, rectification, effacement, opposition, portabilité.<br/>Contact : alxdlucaspro1@gmail.com — Réponse sous 30 jours.<br/>Réclamation possible auprès de la CNIL (cnil.fr).</div>
+      <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">4. Vos droits RGPD</strong><br/>Accès, rectification, effacement, opposition, portabilité.<br/>Contact : <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1475786c70786177756764667b25547379757d783a777b79">[email&#160;protected]</a> — Réponse sous 30 jours.<br/>Réclamation possible auprès de la CNIL (cnil.fr).</div>
       <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">5. Conservation des données</strong><br/>Données de commande : 3 ans. Cookies analytiques : 13 mois.</div>
       <div><strong style="color:#0a0a0a;font-size:14px;text-transform:uppercase;letter-spacing:1px;">6. Transferts hors UE</strong><br/>Google Analytics et Stripe peuvent traiter des données hors UE dans le cadre de garanties appropriées (clauses contractuelles types UE).</div>
     </div>
@@ -1924,7 +2099,7 @@ async function genererActusNow() {
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ══ COOKIES RGPD ══
 function initCookies() {
   const consent = localStorage.getItem('padelx_cookie_consent');
@@ -1936,18 +2111,4 @@ function initCookies() {
 }
 function acceptCookies() {
   localStorage.setItem('padelx_cookie_consent', 'accepted');
-  document.getElementById('cookieBanner').classList.remove('show');
-}
-function refuseCookies() {
-  localStorage.setItem('padelx_cookie_consent', 'refused');
-  document.getElementById('cookieBanner').classList.remove('show');
-  disableAnalytics();
-}
-function disableAnalytics() {
-  window['ga-disable-G-FZM67E3NWH'] = true;
-}
-document.addEventListener('DOMContentLoaded', initCookies);
-</script>
-
-</body>
-</html>
+  document.getElementById('cookieBanner').classList.
