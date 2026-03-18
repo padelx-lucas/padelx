@@ -1793,11 +1793,21 @@ async function loadPacks() {
 
 function renderPacks() {
   const grid = document.getElementById('packsGrid');
-  grid.innerHTML = packs.map(p => {
-    const saving = p.old_price ? Math.round(((p.old_price - p.price) / p.old_price) * 100) : 0;
-    return `
+  if (!packs.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:rgba(255,255,255,.3);font-size:13px;letter-spacing:2px;">
+      ${isAdmin ? '<button class="btn-red" onclick="openAddPack()">+ Créer ton premier pack</button>' : 'Packs bientôt disponibles...'}
+    </div>`;
+    return;
+  }
+  const saving = p => p.old_price ? Math.round(((p.old_price - p.price) / p.old_price) * 100) : 0;
+  grid.innerHTML = packs.map(p => `
     <div class="pack-card${p.featured ? ' featured' : ''}">
       ${p.featured ? '<div class="pack-featured-tag">⭐ Le plus populaire</div>' : ''}
+      ${isAdmin ? `
+        <div style="position:absolute;top:10px;right:10px;display:flex;gap:4px;z-index:10;">
+          <button class="padm padm-e" onclick="editPack('${p.id}')" title="Modifier">✏</button>
+          <button class="padm padm-d" onclick="deletePack('${p.id}')" title="Supprimer">✕</button>
+        </div>` : ''}
       <div class="pack-header">
         <div class="pack-level">${p.level}</div>
         <div class="pack-name">${p.name}</div>
@@ -1805,12 +1815,12 @@ function renderPacks() {
         <div class="pack-price-row">
           <div class="pack-price">${fmt(p.price)}</div>
           ${p.old_price ? `<div class="pack-old-price">${fmt(p.old_price)}</div>` : ''}
-          ${saving > 0 ? `<div class="pack-saving">-${saving}%</div>` : ''}
+          ${saving(p) > 0 ? `<div class="pack-saving">-${saving(p)}%</div>` : ''}
         </div>
       </div>
       <div class="pack-items">
         <div class="pack-items-title">Contenu du pack</div>
-        ${p.items.map(item => `
+        ${(p.items||[]).map(item => `
           <div class="pack-item">
             <div class="pack-item-ico">${item.ico}</div>
             <div class="pack-item-info">
@@ -1824,8 +1834,7 @@ function renderPacks() {
           🛒 Précommander ce pack →
         </button>
       </div>
-    </div>`;
-  }).join('');
+    </div>`).join('');
 }
 
 function addPackToCart(packId) {
@@ -1848,6 +1857,110 @@ function addPackToCart(packId) {
   openCart();
   toast(pack.name + ' ajouté au panier ✓');
 }
+
+// ══ CRUD PACKS ══
+let editPackId = null;
+let packItems = [];
+
+function openAddPack() {
+  editPackId = null;
+  packItems = [];
+  document.getElementById('packModalTitle').textContent = 'Nouveau pack';
+  document.getElementById('packName').value = '';
+  document.getElementById('packLevel').value = 'Débutant';
+  document.getElementById('packDesc').value = '';
+  document.getElementById('packPrice').value = '';
+  document.getElementById('packOldPrice').value = '';
+  document.getElementById('packFeatured').checked = false;
+  renderPackItemsEditor();
+  openModal('packModal');
+}
+
+function editPack(id) {
+  const p = packs.find(x => x.id === id); if (!p) return;
+  editPackId = id;
+  packItems = [...(p.items || [])];
+  document.getElementById('packModalTitle').textContent = 'Modifier le pack';
+  document.getElementById('packName').value = p.name;
+  document.getElementById('packLevel').value = p.level;
+  document.getElementById('packDesc').value = p.desc || '';
+  document.getElementById('packPrice').value = p.price;
+  document.getElementById('packOldPrice').value = p.old_price || '';
+  document.getElementById('packFeatured').checked = !!p.featured;
+  renderPackItemsEditor();
+  openModal('packModal');
+}
+
+function renderPackItemsEditor() {
+  const el = document.getElementById('packItemsList');
+  el.innerHTML = packItems.map((item, i) => `
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+      <input type="text" value="${item.ico}" placeholder="🏓" style="width:48px;border:1.5px solid var(--border);padding:8px;font-size:16px;text-align:center;" oninput="packItems[${i}].ico=this.value"/>
+      <input type="text" value="${item.name}" placeholder="Nom produit" style="flex:1;border:1.5px solid var(--border);padding:8px;font-size:12px;" oninput="packItems[${i}].name=this.value"/>
+      <input type="text" value="${item.brand}" placeholder="Marque" style="width:90px;border:1.5px solid var(--border);padding:8px;font-size:12px;" oninput="packItems[${i}].brand=this.value"/>
+      <button onclick="removePackItem(${i})" style="background:var(--r);color:#fff;border:none;width:28px;height:28px;cursor:pointer;flex-shrink:0;">✕</button>
+    </div>`).join('') + `
+    <button onclick="addPackItem()" style="width:100%;background:var(--g);border:1.5px dashed var(--border);padding:10px;font-size:11px;letter-spacing:1px;cursor:pointer;margin-top:4px;">+ Ajouter un produit au pack</button>`;
+}
+
+function addPackItem() {
+  packItems.push({ ico: '📦', name: '', brand: '' });
+  renderPackItemsEditor();
+}
+
+function removePackItem(i) {
+  packItems.splice(i, 1);
+  renderPackItemsEditor();
+}
+
+async function savePack() {
+  const name = document.getElementById('packName').value.trim();
+  const price = document.getElementById('packPrice').value;
+  if (!name || !price) { toast('Remplis le nom et le prix'); return; }
+  const d = {
+    id: editPackId || 'pack_' + Date.now(),
+    name,
+    level: document.getElementById('packLevel').value,
+    desc: document.getElementById('packDesc').value.trim(),
+    price: parseFloat(price),
+    old_price: document.getElementById('packOldPrice').value ? parseFloat(document.getElementById('packOldPrice').value) : null,
+    featured: document.getElementById('packFeatured').checked,
+    items: packItems.filter(i => i.name)
+  };
+  try {
+    if (editPackId) {
+      await fetch(`/api/packs/${editPackId}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(d) });
+      toast('Pack modifié ✓');
+    } else {
+      await fetch('/api/packs', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(d) });
+      toast('Pack créé ✓');
+    }
+    await loadPacks();
+    closeModal('packModal');
+  } catch(e) {
+    // fallback local
+    if (editPackId) {
+      const i = packs.findIndex(p => p.id === editPackId);
+      if (i !== -1) packs[i] = d;
+    } else {
+      packs.push(d);
+    }
+    renderPacks();
+    closeModal('packModal');
+    toast(editPackId ? 'Pack modifié ✓' : 'Pack créé ✓');
+  }
+}
+
+async function deletePack(id) {
+  if (!confirm('Supprimer ce pack ?')) return;
+  try {
+    await fetch(`/api/packs/${id}`, { method:'DELETE' });
+  } catch(e) {}
+  packs = packs.filter(p => p.id !== id);
+  renderPacks();
+  toast('Pack supprimé');
+}
+
 
 // ══ ACTUS ══
 async function loadNews() {
@@ -1966,6 +2079,44 @@ async function genererActusNow() {
     <div class="mfield"><label>Votre prénom</label><input type="text" id="reviewName" placeholder="Ex: Thomas"/></div>
     <div class="mfield"><label>Votre avis</label><textarea id="reviewText" placeholder="Partagez votre expérience avec ce produit..."></textarea></div>
     <button class="btn-full" onclick="submitReview()">Publier mon avis →</button>
+  </div>
+</div>
+
+<!-- MODAL PACK -->
+<div class="modal-bg" id="packModal">
+  <div class="modal wide" style="max-width:560px;">
+    <button class="modal-x" onclick="closeModal('packModal')">✕</button>
+    <div class="modal-label">Admin</div>
+    <h2 class="modal-title" id="packModalTitle">Nouveau pack</h2>
+    <div class="mfield"><label>Nom du pack</label><input type="text" id="packName" placeholder="Ex: Pack Débutant"/></div>
+    <div class="mrow">
+      <div class="mfield">
+        <label>Niveau</label>
+        <select id="packLevel">
+          <option>Débutant</option>
+          <option>Intermédiaire</option>
+          <option>Avancé</option>
+          <option>Compétition</option>
+        </select>
+      </div>
+      <div class="mfield">
+        <label>Mis en avant ?</label>
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 0;">
+          <input type="checkbox" id="packFeatured" style="width:18px;height:18px;accent-color:var(--r);"/>
+          <span style="font-size:12px;color:var(--muted);">⭐ Le plus populaire</span>
+        </div>
+      </div>
+    </div>
+    <div class="mfield"><label>Description</label><textarea id="packDesc" placeholder="Décris ce pack en une phrase..."></textarea></div>
+    <div class="mrow">
+      <div class="mfield"><label>Prix (€)</label><input type="number" id="packPrice" placeholder="179"/></div>
+      <div class="mfield"><label>Ancien prix (€)</label><input type="number" id="packOldPrice" placeholder="229"/></div>
+    </div>
+    <div class="mfield">
+      <label>Produits inclus dans le pack</label>
+      <div id="packItemsList"></div>
+    </div>
+    <button class="btn-full" onclick="savePack()">Enregistrer le pack →</button>
   </div>
 </div>
 
