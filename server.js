@@ -66,6 +66,28 @@ app.delete('/api/products/:id', async (req, res) => {
   res.json({ success: true });
 });
 
+// PACKS
+app.get('/api/packs', async (req, res) => {
+  const { data, error } = await supabase.from('packs').select('*').order('created_at', { ascending: true });
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data);
+});
+app.post('/api/packs', async (req, res) => {
+  const { data, error } = await supabase.from('packs').insert([req.body]).select();
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data[0]);
+});
+app.put('/api/packs/:id', async (req, res) => {
+  const { data, error } = await supabase.from('packs').update(req.body).eq('id', req.params.id).select();
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data[0]);
+});
+app.delete('/api/packs/:id', async (req, res) => {
+  const { error } = await supabase.from('packs').delete().eq('id', req.params.id);
+  if (error) return res.status(500).json({ error: error.message });
+  res.json({ success: true });
+});
+
 // NEWS
 app.get('/api/news', async (req, res) => {
   const { data, error } = await supabase.from('news').select('*').order('created_at', { ascending: false }).limit(10);
