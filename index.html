@@ -183,10 +183,10 @@ nav{background:var(--w);border-bottom:1px solid var(--border);position:sticky;to
 .filter-bar{display:flex;gap:6px;flex-wrap:wrap;}
 .fpill{background:none;border:1.5px solid var(--border);color:var(--muted);padding:8px 18px;font-size:11px;letter-spacing:2px;text-transform:uppercase;transition:.2s;}
 .fpill:hover,.fpill.on{border-color:var(--k);color:var(--k);background:var(--k);color:#fff;}
-.prods-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:40px;}
+.prods-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;margin-top:40px;}
 .pcard{background:var(--panel);border:1px solid var(--border);position:relative;display:flex;flex-direction:column;transition:box-shadow .25s;}
 .pcard:hover{box-shadow:0 8px 40px rgba(0,0,0,.1);}
-.pcard-img{aspect-ratio:1;background:var(--g);display:flex;align-items:center;justify-content:center;font-size:72px;position:relative;overflow:hidden;}
+.pcard-img{aspect-ratio:1;background:var(--g);display:flex;align-items:center;justify-content:center;font-size:44px;position:relative;overflow:hidden;}
 .pcard-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 60%,rgba(0,0,0,.04));pointer-events:none;}
 .pcard:hover .pcard-img-ico{transform:scale(1.08);}
 .pcard-img-ico{transition:transform .3s;display:block;}
@@ -194,14 +194,14 @@ nav{background:var(--w);border-bottom:1px solid var(--border);position:sticky;to
 .pbadge-new{background:var(--k);color:#fff;}
 .pbadge-sale{background:var(--r);color:#fff;}
 .pbadge-hot{background:#f5a623;color:#fff;}
-.pcard-body{padding:20px;flex:1;display:flex;flex-direction:column;}
+.pcard-body{padding:12px;flex:1;display:flex;flex-direction:column;}
 .pcard-brand{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--r);margin-bottom:6px;}
-.pcard-name{font-family:'Oswald',sans-serif;font-size:20px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;line-height:1.1;flex:1;margin-bottom:8px;}
-.pcard-desc{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:16px;}
+.pcard-name{font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;line-height:1.1;flex:1;margin-bottom:4px;}
+.pcard-desc{display:none;}
 .pcard-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;gap:12px;}
-.pcard-price{font-family:'Oswald',sans-serif;font-size:24px;font-weight:700;}
+.pcard-price{font-family:'Oswald',sans-serif;font-size:17px;font-weight:700;}
 .pcard-old{font-size:13px;color:var(--muted);text-decoration:line-through;margin-left:4px;}
-.pcard-add{background:var(--k);color:#fff;border:none;width:40px;height:40px;font-size:22px;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .15s;flex-shrink:0;}
+.pcard-add{background:var(--k);color:#fff;border:none;width:30px;height:30px;font-size:18px;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .15s;flex-shrink:0;}
 .pcard-add:hover{background:var(--r);transform:scale(1.08);}
 .pcard-admin{position:absolute;top:10px;right:10px;display:none;gap:6px;z-index:5;}
 .admin-mode .pcard-admin{display:flex;}
@@ -1784,9 +1784,13 @@ async function loadPacks() {
     const res = await fetch('/api/packs');
     if (res.ok) {
       const data = await res.json();
-      if (data && data.length) packs = data;
+      packs = Array.isArray(data) ? data : [];
+    } else {
+      packs = [];
     }
-  } catch(e) { /* utilise packs par défaut */ }
+  } catch(e) {
+    packs = [];
+  }
   if (isAdmin) document.getElementById('packsAdminBtn').style.display = 'block';
   renderPacks();
 }
@@ -1811,7 +1815,7 @@ function renderPacks() {
       <div class="pack-header">
         <div class="pack-level">${p.level}</div>
         <div class="pack-name">${p.name}</div>
-        <div class="pack-desc">${p.desc}</div>
+        <div class="pack-desc">${p.description || p.desc || ''}</div>
         <div class="pack-price-row">
           <div class="pack-price">${fmt(p.price)}</div>
           ${p.old_price ? `<div class="pack-old-price">${fmt(p.old_price)}</div>` : ''}
@@ -1883,7 +1887,7 @@ function editPack(id) {
   document.getElementById('packModalTitle').textContent = 'Modifier le pack';
   document.getElementById('packName').value = p.name;
   document.getElementById('packLevel').value = p.level;
-  document.getElementById('packDesc').value = p.desc || '';
+  document.getElementById('packDesc').value = p.description || p.desc || '';
   document.getElementById('packPrice').value = p.price;
   document.getElementById('packOldPrice').value = p.old_price || '';
   document.getElementById('packFeatured').checked = !!p.featured;
@@ -1921,7 +1925,7 @@ async function savePack() {
     id: editPackId || 'pack_' + Date.now(),
     name,
     level: document.getElementById('packLevel').value,
-    desc: document.getElementById('packDesc').value.trim(),
+    description: document.getElementById('packDesc').value.trim(),
     price: parseFloat(price),
     old_price: document.getElementById('packOldPrice').value ? parseFloat(document.getElementById('packOldPrice').value) : null,
     featured: document.getElementById('packFeatured').checked,
@@ -1954,11 +1958,14 @@ async function savePack() {
 async function deletePack(id) {
   if (!confirm('Supprimer ce pack ?')) return;
   try {
-    await fetch(`/api/packs/${id}`, { method:'DELETE' });
-  } catch(e) {}
+    const res = await fetch(`/api/packs/${id}`, { method:'DELETE' });
+    if (!res.ok) throw new Error('Erreur serveur');
+    toast('Pack supprimé ✓');
+  } catch(e) {
+    toast('Erreur suppression');
+  }
   packs = packs.filter(p => p.id !== id);
   renderPacks();
-  toast('Pack supprimé');
 }
 
 
