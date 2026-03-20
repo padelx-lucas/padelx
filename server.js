@@ -3,12 +3,16 @@ const stripe   = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const path     = require('path');
 const fs       = require('fs');
 const { createClient } = require('@supabase/supabase-js');
+const { Resend } = require('resend');
 const multer   = require('multer');
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
 
 const app = express();
 app.use(express.json());
+
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
@@ -200,8 +204,79 @@ app.post('/create-checkout', async (req, res) => {
   }
 });
 
-app.get('/success', (req, res) => {
-  res.send(`<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"/><title>Merci — PADEL X</title><link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap" rel="stylesheet"/><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:#f5f4f0;font-family:'Oswald',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;}.box{background:#fff;border-top:4px solid #D0021B;padding:60px 48px;text-align:center;max-width:520px;width:100%;margin:20px;}.check{font-size:64px;margin-bottom:24px;}h1{font-size:52px;font-weight:700;text-transform:uppercase;letter-spacing:-2px;margin-bottom:12px;}h1 span{color:#D0021B;}p{font-size:14px;color:#888;line-height:1.8;margin-bottom:32px;}a{display:inline-block;background:#0a0a0a;color:#fff;padding:14px 32px;font-size:12px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;}a:hover{background:#D0021B;}</style></head><body><div class="box"><div class="check">✅</div><h1>Merci <span>!</span></h1><p>Ta commande est confirmée.<br/>Tu recevras un email sous peu.<br/>Livraison sous 7 jours maximum.</p><a href="/">← Retour à la boutique</a></div></body></html>`);
+app.get('/success', async (req, res) => {
+  const { session_id } = req.query;
+  let clientNom = '';
+  try {
+    if (session_id) {
+      const session = await stripe.checkout.sessions.retrieve(session_id, {
+        expand: ['line_items', 'customer_details']
+      });
+      clientNom = session.customer_details?.name || '';
+      const clientEmail = session.customer_details?.email || '';
+      const produits = session.line_items?.data || [];
+      const montant = (session.amount_total || 0) / 100;
+
+      // Sauvegarder dans Supabase
+      await supabase.from('commandes').upsert([{
+        id: 'cmd_' + Date.now(),
+        stripe_session_id: session_id,
+        client_email: clientEmail,
+        client_nom: clientNom,
+        adresse_livraison: session.shipping_details || {},
+        produits: produits,
+        montant_total: montant,
+        statut: 'confirmée'
+      }]);
+
+      // Envoyer email
+      if (clientEmail) {
+        const lignes = produits.map(item => `
+          <tr>
+            <td style="padding:10px;border-bottom:1px solid #eee;font-size:13px;">${item.description}</td>
+            <td style="padding:10px;border-bottom:1px solid #eee;text-align:center;font-size:13px;">${item.quantity}</td>
+            <td style="padding:10px;border-bottom:1px solid #eee;text-align:right;font-size:13px;">${((item.amount_total||0)/100).toFixed(2).replace('.',',')} €</td>
+          </tr>`).join('');
+
+        await resend.emails.send({
+          from: 'Padel X <onboarding@resend.dev>',
+          to: clientEmail,
+          subject: '✅ Commande confirmée — Padel X',
+          html: `<!DOCTYPE html><html><head><meta charset="UTF-8"/></head><body style="margin:0;padding:0;background:#f5f4f0;font-family:Arial,sans-serif;">
+            <div style="max-width:560px;margin:40px auto;background:#fff;border-top:4px solid #D0021B;">
+              <div style="background:#0a0a0a;padding:28px 36px;">
+                <span style="font-family:Arial Black,Arial;font-size:22px;font-weight:900;letter-spacing:4px;color:#fff;">PADEL<span style="color:#D0021B;">X</span></span>
+              </div>
+              <div style="padding:36px;">
+                <h1 style="font-family:Arial Black,Arial;font-size:28px;font-weight:900;text-transform:uppercase;color:#0a0a0a;margin-bottom:8px;">Merci ${clientNom} !</h1>
+                <p style="color:#888;font-size:13px;line-height:1.8;margin-bottom:24px;">Ta commande est confirmée. Tu recevras tes produits sous <strong>7 jours maximum</strong>.</p>
+                <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+                  <thead><tr style="background:#0a0a0a;">
+                    <th style="padding:10px;text-align:left;color:#fff;font-size:11px;">PRODUIT</th>
+                    <th style="padding:10px;text-align:center;color:#fff;font-size:11px;">QTÉ</th>
+                    <th style="padding:10px;text-align:right;color:#fff;font-size:11px;">PRIX</th>
+                  </tr></thead>
+                  <tbody>${lignes}</tbody>
+                  <tfoot><tr>
+                    <td colspan="2" style="padding:12px 10px;font-weight:bold;">Total</td>
+                    <td style="padding:12px 10px;text-align:right;font-size:18px;font-weight:900;color:#D0021B;">${montant.toFixed(2).replace('.',',')} €</td>
+                  </tr></tfoot>
+                </table>
+                <p style="font-size:12px;color:#888;margin-bottom:24px;">Une question ? Contacte-nous à <strong>alxdlucaspro1@gmail.com</strong></p>
+                <a href="https://www.padelx.fr" style="display:inline-block;background:#0a0a0a;color:#fff;padding:12px 28px;font-size:11px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;">Retour à la boutique →</a>
+              </div>
+              <div style="padding:16px 36px;border-top:1px solid #eee;font-size:11px;color:#aaa;">© 2025 Padel X — padelx.fr</div>
+            </div>
+          </body></html>`
+        });
+        console.log('Email envoyé à ' + clientEmail);
+      }
+    }
+  } catch(e) {
+    console.error('Erreur success:', e.message);
+  }
+
+  res.send(`<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"/><title>Merci — PADEL X</title><link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap" rel="stylesheet"/><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:#f5f4f0;font-family:'Oswald',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;}.box{background:#fff;border-top:4px solid #D0021B;padding:60px 48px;text-align:center;max-width:520px;width:100%;margin:20px;}.check{font-size:64px;margin-bottom:24px;}h1{font-size:52px;font-weight:700;text-transform:uppercase;letter-spacing:-2px;margin-bottom:12px;}h1 span{color:#D0021B;}p{font-size:14px;color:#888;line-height:1.8;margin-bottom:32px;font-family:Arial,sans-serif;}a{display:inline-block;background:#0a0a0a;color:#fff;padding:14px 32px;font-size:12px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;}a:hover{background:#D0021B;}</style></head><body><div class="box"><div class="check">✅</div><h1>Merci <span>!</span></h1><p>Ta commande est confirmée.<br/>Un email de confirmation t'a été envoyé.<br/>Livraison sous 7 jours maximum.</p><a href="/">← Retour à la boutique</a></div></body></html>`);
 });
 
 const PORT = process.env.PORT || 3000;
