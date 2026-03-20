@@ -262,7 +262,7 @@ app.get('/success', async (req, res) => {
                   </tr></tfoot>
                 </table>
                 <p style="font-size:12px;color:#888;margin-bottom:24px;">Une question ? Contacte-nous à <strong>alxdlucaspro1@gmail.com</strong></p>
-                <a href="https://www.padelx.fr" style="display:inline-block;background:#0a0a0a;color:#fff;padding:12px 28px;font-size:11px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;">Retour à la boutique →</a>
+                <a href="https://www.padelx.fr/suivi?id=${session_id}" style="display:inline-block;background:#f5a623;color:#fff;padding:12px 28px;font-size:11px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;margin-bottom:10px;">📦 Suivre ma commande →</a><br/><br/><a href="https://www.padelx.fr" style="display:inline-block;background:#0a0a0a;color:#fff;padding:12px 28px;font-size:11px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;">Retour à la boutique →</a>
               </div>
               <div style="padding:16px 36px;border-top:1px solid #eee;font-size:11px;color:#aaa;">© 2025 Padel X — padelx.fr</div>
             </div>
@@ -294,6 +294,160 @@ app.get('/success', async (req, res) => {
   }
 
   res.send(`<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"/><title>Merci — PADEL X</title><link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap" rel="stylesheet"/><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:#f5f4f0;font-family:'Oswald',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;}.box{background:#fff;border-top:4px solid #D0021B;padding:60px 48px;text-align:center;max-width:520px;width:100%;margin:20px;}.check{font-size:64px;margin-bottom:24px;}h1{font-size:52px;font-weight:700;text-transform:uppercase;letter-spacing:-2px;margin-bottom:12px;}h1 span{color:#D0021B;}p{font-size:14px;color:#888;line-height:1.8;margin-bottom:32px;font-family:Arial,sans-serif;}a{display:inline-block;background:#0a0a0a;color:#fff;padding:14px 32px;font-size:12px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;}a:hover{background:#D0021B;}</style></head><body><div class="box"><div class="check">✅</div><h1>Merci <span>!</span></h1><p>Ta commande est confirmée.<br/>Un email de confirmation t'a été envoyé.<br/>Livraison sous 7 jours maximum.</p><a href="/">← Retour à la boutique</a></div></body></html>`);
+});
+
+// ══ SUIVI DE COMMANDE ══
+app.get('/suivi', async (req, res) => {
+  const { id } = req.query;
+  let commande = null;
+  let erreur = '';
+
+  if (id) {
+    const { data } = await supabase.from('commandes').select('*').eq('stripe_session_id', id).single();
+    commande = data;
+    if (!commande) erreur = 'Commande introuvable. Vérifie ton email de confirmation.';
+  }
+
+  const statutColor = { 'confirmée': '#f5a623', 'en préparation': '#3498db', 'expédiée': '#9b59b6', 'livrée': '#27ae60' };
+  const statutSteps = ['confirmée', 'en préparation', 'expédiée', 'livrée'];
+  const curStep = commande ? statutSteps.indexOf(commande.statut) : -1;
+
+  const produitsHtml = commande?.produits?.map(p => `
+    <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee;font-size:13px;">
+      <span>${p.description} × ${p.quantity}</span>
+      <strong>${((p.amount_total||0)/100).toFixed(2).replace('.',',')} €</strong>
+    </div>`).join('') || '';
+
+  res.send(`<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Suivi de commande — PADEL X</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#f5f4f0;font-family:'Inter',sans-serif;min-height:100vh;}
+nav{background:#0a0a0a;padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;letter-spacing:4px;color:#fff;text-decoration:none;}
+.logo span{color:#D0021B;}
+.wrap{max-width:680px;margin:48px auto;padding:0 20px;}
+h1{font-family:'Oswald',sans-serif;font-size:36px;font-weight:700;text-transform:uppercase;letter-spacing:-1px;color:#0a0a0a;margin-bottom:8px;}
+.sub{font-size:13px;color:#888;margin-bottom:32px;}
+.search-box{display:flex;gap:0;margin-bottom:40px;}
+.search-box input{flex:1;border:1.5px solid #ddd;padding:14px 18px;font-size:13px;outline:none;border-right:none;}
+.search-box input:focus{border-color:#0a0a0a;}
+.search-box button{background:#0a0a0a;color:#fff;border:none;padding:14px 24px;font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;}
+.search-box button:hover{background:#D0021B;}
+.erreur{background:#fff5f5;border-left:3px solid #D0021B;padding:14px 18px;font-size:13px;color:#D0021B;margin-bottom:24px;}
+.card{background:#fff;border-top:3px solid #D0021B;padding:32px;margin-bottom:20px;}
+.card-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#888;margin-bottom:16px;}
+.statut-badge{display:inline-block;padding:6px 16px;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;color:#fff;background:${commande ? (statutColor[commande.statut]||'#888') : '#888'};}
+.steps{display:flex;align-items:center;margin:24px 0;gap:0;}
+.step{flex:1;text-align:center;position:relative;}
+.step-dot{width:28px;height:28px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+.step-dot.done{background:#0a0a0a;color:#fff;}
+.step-dot.active{background:#D0021B;color:#fff;}
+.step-dot.todo{background:#eee;color:#aaa;}
+.step-line{position:absolute;top:14px;left:50%;right:-50%;height:2px;z-index:0;}
+.step-line.done{background:#0a0a0a;}
+.step-line.todo{background:#eee;}
+.step:last-child .step-line{display:none;}
+.step-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#888;margin-top:4px;}
+.step-label.active{color:#D0021B;font-weight:600;}
+.step-label.done{color:#0a0a0a;}
+.info-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px;}
+.info-label{color:#888;}
+.total-row{display:flex;justify-content:space-between;padding:14px 0;font-weight:700;}
+.total-val{font-family:'Oswald',sans-serif;font-size:22px;color:#D0021B;}
+.back{display:inline-block;background:#0a0a0a;color:#fff;padding:12px 28px;font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;margin-top:8px;}
+.back:hover{background:#D0021B;}
+${commande?.numero_suivi ? `.tracking-box{background:#f0f9f0;border-left:3px solid #27ae60;padding:14px 18px;margin-top:16px;font-size:13px;}` : ''}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="logo">PADEL<span>X</span></a>
+  <span style="color:rgba(255,255,255,.3);font-size:11px;letter-spacing:2px;">SUIVI DE COMMANDE</span>
+</nav>
+<div class="wrap">
+  <h1>Suivi de<br/>commande</h1>
+  <p class="sub">Entre ton identifiant de commande reçu par email.</p>
+
+  <form class="search-box" action="/suivi" method="get">
+    <input type="text" name="id" placeholder="Identifiant de commande..." value="${id||''}" required/>
+    <button type="submit">Rechercher →</button>
+  </form>
+
+  ${erreur ? `<div class="erreur">❌ ${erreur}</div>` : ''}
+
+  ${commande ? `
+  <div class="card">
+    <div class="card-title">Statut de la commande</div>
+    <div class="statut-badge">${commande.statut}</div>
+
+    <div class="steps">
+      ${statutSteps.map((s, i) => `
+        <div class="step">
+          <div class="step-line ${i < curStep ? 'done' : 'todo'}"></div>
+          <div class="step-dot ${i < curStep ? 'done' : i === curStep ? 'active' : 'todo'}">${i < curStep ? '✓' : i+1}</div>
+          <div class="step-label ${i < curStep ? 'done' : i === curStep ? 'active' : ''}">${s}</div>
+        </div>`).join('')}
+    </div>
+
+    ${commande.numero_suivi ? `
+    <div class="tracking-box">
+      📦 <strong>Numéro de suivi :</strong> ${commande.numero_suivi}
+      ${commande.transporteur ? ` — ${commande.transporteur}` : ''}
+    </div>` : ''}
+  </div>
+
+  <div class="card">
+    <div class="card-title">Informations client</div>
+    <div class="info-row"><span class="info-label">Nom</span><strong>${commande.client_nom}</strong></div>
+    <div class="info-row"><span class="info-label">Email</span><strong>${commande.client_email}</strong></div>
+    ${commande.adresse_livraison?.address ? `
+    <div class="info-row">
+      <span class="info-label">Adresse</span>
+      <strong style="text-align:right;">${commande.adresse_livraison.address.line1||''}<br/>${commande.adresse_livraison.address.postal_code||''} ${commande.adresse_livraison.address.city||''}</strong>
+    </div>` : ''}
+  </div>
+
+  <div class="card">
+    <div class="card-title">Produits commandés</div>
+    ${produitsHtml}
+    <div class="total-row">
+      <span>Total payé</span>
+      <span class="total-val">${commande.montant_total?.toFixed(2).replace('.',',')} €</span>
+    </div>
+  </div>
+
+  <a href="/" class="back">← Retour à la boutique</a>
+  ` : `
+  <div style="text-align:center;padding:48px;color:#888;font-size:13px;">
+    Ton identifiant de commande se trouve dans l'email de confirmation reçu après ton achat.
+  </div>`}
+</div>
+</body>
+</html>`);
+});
+
+// ══ ADMIN — Mettre à jour le statut d'une commande ══
+app.put('/api/commandes/:id', async (req, res) => {
+  const { statut, numero_suivi, transporteur } = req.body;
+  const { data, error } = await supabase.from('commandes')
+    .update({ statut, numero_suivi, transporteur })
+    .eq('stripe_session_id', req.params.id)
+    .select();
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data[0]);
+});
+
+// ══ ADMIN — Liste des commandes ══
+app.get('/api/commandes', async (req, res) => {
+  const { data, error } = await supabase.from('commandes').select('*').order('created_at', { ascending: false });
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data);
 });
 
 const PORT = process.env.PORT || 3000;
