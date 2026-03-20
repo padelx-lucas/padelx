@@ -740,6 +740,46 @@ footer{background:#050505;padding:60px 0 0;}
   .packs-grid{grid-template-columns:1fr;}
   .packs-section{padding:48px 0;}
 }
+/* ══ POPUP BIENVENUE ══ */
+.popup-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99990;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:.3s;}
+.popup-bg.show{opacity:1;visibility:visible;}
+.popup{background:#fff;max-width:480px;width:90%;position:relative;overflow:hidden;}
+.popup-top{background:#0a0a0a;padding:36px 36px 28px;position:relative;overflow:hidden;}
+.popup-top::after{content:'X';position:absolute;right:-16px;bottom:-24px;font-family:'Oswald',sans-serif;font-size:160px;font-weight:700;color:rgba(255,255,255,.04);line-height:1;}
+.popup-tag{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--r);margin-bottom:10px;}
+.popup-title{font-family:'Oswald',sans-serif;font-size:36px;font-weight:700;text-transform:uppercase;letter-spacing:-1px;color:#fff;line-height:1;margin-bottom:8px;}
+.popup-title em{font-style:normal;color:var(--r);}
+.popup-sub{font-size:12px;color:rgba(255,255,255,.4);line-height:1.7;}
+.popup-body{padding:28px 36px;}
+.popup-code{background:var(--g);border:2px dashed var(--border);padding:16px;text-align:center;margin-bottom:20px;}
+.popup-code-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.popup-code-val{font-family:'Oswald',sans-serif;font-size:32px;font-weight:700;letter-spacing:4px;color:var(--k);}
+.popup-code-val em{font-style:normal;color:var(--r);}
+.popup-close{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.1);color:#fff;border:none;width:28px;height:28px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;}
+.popup-close:hover{background:var(--r);}
+.popup-dismiss{display:block;text-align:center;font-size:11px;color:var(--muted);margin-top:12px;cursor:pointer;text-decoration:underline;}
+
+/* ══ BARRE LIVRAISON GRATUITE ══ */
+.shipping-bar{background:var(--g);border-bottom:1px solid var(--border);padding:10px 40px;display:none;}
+.shipping-bar.show{display:block;}
+.shipping-bar-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:12px;}
+.shipping-bar-text{font-size:11px;letter-spacing:1px;color:var(--muted);flex:1;}
+.shipping-bar-text strong{color:var(--k);}
+.shipping-bar-text.done{color:#27ae60;}
+.shipping-progress{flex:1;height:4px;background:var(--border);max-width:200px;}
+.shipping-progress-fill{height:100%;background:linear-gradient(to right,var(--r),#27ae60);transition:width .4s ease;}
+
+/* ══ PRODUITS SIMILAIRES ══ */
+.similar-section{border-top:1px solid var(--border);padding-top:20px;margin-top:20px;}
+.similar-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.similar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.similar-card{border:1px solid var(--border);cursor:pointer;transition:box-shadow .2s;}
+.similar-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08);}
+.similar-card-img{aspect-ratio:1;background:var(--g);display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden;}
+.similar-card-img img{width:100%;height:100%;object-fit:cover;}
+.similar-card-body{padding:8px;}
+.similar-card-name{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--k);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.similar-card-price{font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;color:var(--k);}
 </style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-FZM67E3NWH"></script>
@@ -823,6 +863,34 @@ footer{background:#050505;padding:60px 0 0;}
 <!-- NAV -->
 <nav>
   <div class="nav-inner">
+
+<!-- BARRE LIVRAISON GRATUITE -->
+<div class="shipping-bar" id="shippingBar">
+  <div class="shipping-bar-inner">
+    <span class="shipping-bar-text" id="shippingBarText">🚚 <strong>Livraison gratuite</strong> dès 79€</span>
+    <div class="shipping-progress"><div class="shipping-progress-fill" id="shippingFill" style="width:0%"></div></div>
+  </div>
+</div>
+
+<!-- POPUP BIENVENUE -->
+<div class="popup-bg" id="welcomePopup">
+  <div class="popup">
+    <button class="popup-close" onclick="closePopup()">✕</button>
+    <div class="popup-top">
+      <div class="popup-tag">Offre de bienvenue</div>
+      <div class="popup-title">-10% sur<br/>ta <em>première</em><br/>commande</div>
+      <div class="popup-sub">Rejoins la communauté Padel X et profite de cette offre exclusive.</div>
+    </div>
+    <div class="popup-body">
+      <div class="popup-code">
+        <div class="popup-code-label">Ton code promo</div>
+        <div class="popup-code-val">PADEL<em>X10</em></div>
+      </div>
+      <button class="btn-full" onclick="copyPromo();closePopup()">Copier le code et commencer →</button>
+      <span class="popup-dismiss" onclick="closePopup()">Non merci, je préfère payer plein tarif</span>
+    </div>
+  </div>
+</div>
     <div class="logo" onclick="goto('hero')" style="cursor:pointer;">PADEL<span>X</span></div>
     <ul class="nav-links">
 
@@ -1282,6 +1350,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadNews();
   await loadConseils();
   await loadPacks();
+  initPopup();
   const obs = new IntersectionObserver(entries =>
     entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); }),
     { threshold: 0.07 }
@@ -1472,6 +1541,23 @@ function openProdDetail(id) {
               </div>
               <div class="review-text">${r.text}</div>
             </div>`).join('') : '<div style="font-size:12px;color:var(--muted);padding:12px 0;">Sois le premier à laisser un avis !</div>'}
+        </div>
+        ${getSimilarProducts(p).length ? `
+        <div class="similar-section">
+          <div class="similar-title">Produits similaires</div>
+          <div class="similar-grid">
+            ${getSimilarProducts(p).map(s => `
+              <div class="similar-card" onclick="closeModal('prodDetailModal');setTimeout(()=>openProdDetail('${s.id}'),200)">
+                <div class="similar-card-img">
+                  ${s.image_url ? `<img src="${s.image_url}" alt="${s.name}"/>` : (s.emoji || EMOJIS[s.category] || '📦')}
+                </div>
+                <div class="similar-card-body">
+                  <div class="similar-card-name">${s.name}</div>
+                  <div class="similar-card-price">${fmt(s.price)}</div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>` : ''}
         </div>
       </div>
     </div>`;
@@ -1740,6 +1826,7 @@ function updateCartUI() {
   document.getElementById('cartBadge').textContent = total;
   document.getElementById('cartHeadN').textContent = total ? `(${total})` : '';
   document.getElementById('cartTotalVal').textContent = fmt(amount);
+  updateShippingBar();
   const body = document.getElementById('cartBody');
   if (!cart.length) {
     body.innerHTML = '<div class="cart-empty"><div class="ico">🛒</div><p>Panier vide</p></div>';
@@ -2125,6 +2212,50 @@ async function saveCommande(id) {
     body: JSON.stringify({ statut, numero_suivi: suivi, transporteur: transport })
   });
   toast('Commande mise à jour ✓');
+}
+
+// ══ POPUP BIENVENUE ══
+function initPopup() {
+  if (localStorage.getItem('padelx_popup_seen')) return;
+  setTimeout(() => {
+    document.getElementById('welcomePopup').classList.add('show');
+  }, 3000);
+}
+function closePopup() {
+  document.getElementById('welcomePopup').classList.remove('show');
+  localStorage.setItem('padelx_popup_seen', '1');
+}
+function copyPromo() {
+  navigator.clipboard.writeText('PADELX10').catch(() => {});
+  toast('Code PADELX10 copié ! 🎉');
+}
+
+// ══ BARRE LIVRAISON GRATUITE ══
+const FREE_SHIPPING = 79;
+function updateShippingBar() {
+  const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
+  const bar = document.getElementById('shippingBar');
+  const text = document.getElementById('shippingBarText');
+  const fill = document.getElementById('shippingFill');
+  if (!cart.length) { bar.classList.remove('show'); return; }
+  bar.classList.add('show');
+  const pct = Math.min((total / FREE_SHIPPING) * 100, 100);
+  fill.style.width = pct + '%';
+  if (total >= FREE_SHIPPING) {
+    text.innerHTML = '🎉 <strong>Livraison gratuite</strong> offerte sur ta commande !';
+    text.classList.add('done');
+  } else {
+    const reste = (FREE_SHIPPING - total).toFixed(2).replace('.', ',');
+    text.innerHTML = `🚚 Plus que <strong>${reste} €</strong> pour la livraison gratuite !`;
+    text.classList.remove('done');
+  }
+}
+
+// ══ PRODUITS SIMILAIRES ══
+function getSimilarProducts(p, max=3) {
+  return products
+    .filter(x => x.id !== p.id && x.category === p.category)
+    .slice(0, max);
 }
 
 // ══ ACTUS ══
