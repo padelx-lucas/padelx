@@ -268,6 +268,24 @@ app.get('/success', async (req, res) => {
           </body></html>`
         });
         console.log('Email envoyé à ' + clientEmail);
+
+        // Email de notification pour toi
+        await resend.emails.send({
+          from: 'Padel X <contact@padelx.fr>',
+          to: 'alxdlucaspro1@gmail.com',
+          subject: '🛒 Nouvelle commande — ' + montant.toFixed(2).replace('.', ',') + ' €',
+          html: `<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;padding:24px;background:#f5f4f0;">
+            <div style="max-width:500px;margin:0 auto;background:#fff;border-top:4px solid #D0021B;padding:28px;">
+              <h2 style="font-family:Arial Black,Arial;font-size:22px;text-transform:uppercase;color:#0a0a0a;margin-bottom:16px;">🛒 Nouvelle commande !</h2>
+              <p style="font-size:13px;color:#555;margin-bottom:16px;"><strong>Client :</strong> ${clientNom} (${clientEmail})</p>
+              <p style="font-size:13px;color:#555;margin-bottom:16px;"><strong>Montant :</strong> <span style="color:#D0021B;font-size:18px;font-weight:900;">${montant.toFixed(2).replace('.', ',')} €</span></p>
+              <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
+                ${lignes}
+              </table>
+              <a href="https://dashboard.stripe.com/payments" style="display:inline-block;background:#0a0a0a;color:#fff;padding:10px 24px;font-size:11px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;">Voir sur Stripe →</a>
+            </div>
+          </body></html>`
+        });
       }
     }
   } catch(e) {
