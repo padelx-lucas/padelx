@@ -1171,6 +1171,57 @@ footer{background:#050505;padding:60px 0 0;}
       </div>
     </div>
     <div class="mfield"><label>Emoji du produit (si pas d'image)</label><input type="text" id="pEmoji" placeholder="🏓 👟 👕 🎒"/></div>
+    <div class="mrow">
+      <div class="mfield"><label>Niveau</label>
+        <select id="pNiveau">
+          <option value="">— Non spécifié —</option>
+          <option value="Débutant">Débutant</option>
+          <option value="Intermédiaire">Intermédiaire</option>
+          <option value="Avancé">Avancé</option>
+          <option value="Compétition">Compétition</option>
+        </select>
+      </div>
+      <div class="mfield"><label>Forme</label>
+        <select id="pForme">
+          <option value="">— Non spécifié —</option>
+          <option value="Ronde">Ronde</option>
+          <option value="Larme">Larme</option>
+          <option value="Diamant">Diamant</option>
+        </select>
+      </div>
+    </div>
+    <div class="mrow">
+      <div class="mfield"><label>Équilibre</label>
+        <select id="pEquilibre">
+          <option value="">— Non spécifié —</option>
+          <option value="Bas">Bas</option>
+          <option value="Moyen">Moyen</option>
+          <option value="Haut">Haut</option>
+        </select>
+      </div>
+      <div class="mfield"><label>Puissance (1-5 ⭐)</label>
+        <select id="pPuissance">
+          <option value="0">—</option>
+          <option value="1">⭐</option>
+          <option value="2">⭐⭐</option>
+          <option value="3">⭐⭐⭐</option>
+          <option value="4">⭐⭐⭐⭐</option>
+          <option value="5">⭐⭐⭐⭐⭐</option>
+        </select>
+      </div>
+    </div>
+    <div class="mfield"><label>Contrôle (1-5 ⭐)</label>
+      <select id="pControle">
+        <option value="0">—</option>
+        <option value="1">⭐</option>
+        <option value="2">⭐⭐</option>
+        <option value="3">⭐⭐⭐</option>
+        <option value="4">⭐⭐⭐⭐</option>
+        <option value="5">⭐⭐⭐⭐⭐</option>
+      </select>
+    </div>
+    <div class="mfield"><label>Points forts (séparés par des virgules)</label><input type="text" id="pPointsForts" placeholder="Puissance exceptionnelle, Idéale pour smash, Technologie pro"/></div>
+    <div class="mfield"><label>Idéal pour</label><input type="text" id="pIdealPour" placeholder="Joueurs offensifs et compétiteurs"/></div>
     <div class="mfield">
       <label>Image du produit</label>
       <div id="imgPreviewWrap" style="display:none;margin-bottom:10px;width:100%;height:180px;background:var(--g);position:relative;overflow:hidden;">
@@ -1376,6 +1427,24 @@ function openProdDetail(id) {
           ${p.old_price ? `<span class="pd-old">${fmt(p.old_price)}</span>` : ''}
         </div>
         ${p.description ? `<div class="pd-desc">${p.description}</div>` : ''}
+        ${(p.niveau || p.forme || p.equilibre || p.puissance || p.controle) ? `
+        <div style="border-top:1px solid var(--border);padding-top:16px;margin-bottom:16px;display:flex;flex-direction:column;gap:8px;">
+          ${p.niveau ? `<div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--muted);">🎯 Niveau</span><strong>${p.niveau}</strong></div>` : ''}
+          ${p.equilibre ? `<div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--muted);">⚖️ Équilibre</span><strong>${p.equilibre}</strong></div>` : ''}
+          ${p.forme ? `<div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--muted);">🔷 Forme</span><strong>${p.forme}</strong></div>` : ''}
+          ${p.puissance ? `<div style="display:flex;justify-content:space-between;font-size:12px;align-items:center;"><span style="color:var(--muted);">⚡ Puissance</span><span style="color:#f5a623;">${'⭐'.repeat(p.puissance)}</span></div>` : ''}
+          ${p.controle ? `<div style="display:flex;justify-content:space-between;font-size:12px;align-items:center;"><span style="color:var(--muted);">🎯 Contrôle</span><span style="color:#f5a623;">${'⭐'.repeat(p.controle)}</span></div>` : ''}
+        </div>` : ''}
+        ${p.points_forts ? `
+        <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px;">
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">👉 Points forts</div>
+          ${p.points_forts.split(',').map(pf => `<div style="font-size:12px;padding:4px 0;display:flex;align-items:center;gap:8px;"><span style="color:var(--r);">•</span>${pf.trim()}</div>`).join('')}
+        </div>` : ''}
+        ${p.ideal_pour ? `
+        <div style="background:var(--g);padding:12px 16px;margin-bottom:16px;">
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">👉 Idéal pour</div>
+          <div style="font-size:13px;font-weight:600;">${p.ideal_pour}</div>
+        </div>` : ''}
       </div>
       <div>
         <div class="pd-qty-row">
@@ -1562,9 +1631,14 @@ function openAddProd() {
   editId = null;
   document.getElementById('pEye').textContent = 'Nouveau produit';
   document.getElementById('pTitleEl').textContent = 'Ajouter';
-  ['pBrand','pName','pDesc','pPrice','pOld','pEmoji'].forEach(id => document.getElementById(id).value = '');
+  ['pBrand','pName','pDesc','pPrice','pOld','pEmoji','pPointsForts','pIdealPour'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('pCat').value = 'Raquettes';
   document.getElementById('pBadge').value = '';
+  document.getElementById('pNiveau').value = '';
+  document.getElementById('pForme').value = '';
+  document.getElementById('pEquilibre').value = '';
+  document.getElementById('pPuissance').value = '0';
+  document.getElementById('pControle').value = '0';
   document.getElementById('pErr').style.display = 'none';
   clearImg();
   openModal('prodModal');
@@ -1582,6 +1656,13 @@ function editProd(id) {
   document.getElementById('pCat').value = p.category;
   document.getElementById('pBadge').value = p.badge || '';
   document.getElementById('pEmoji').value = p.emoji || '';
+  document.getElementById('pNiveau').value = p.niveau || '';
+  document.getElementById('pForme').value = p.forme || '';
+  document.getElementById('pEquilibre').value = p.equilibre || '';
+  document.getElementById('pPuissance').value = p.puissance || '0';
+  document.getElementById('pControle').value = p.controle || '0';
+  document.getElementById('pPointsForts').value = p.points_forts || '';
+  document.getElementById('pIdealPour').value = p.ideal_pour || '';
   document.getElementById('pErr').style.display = 'none';
   openModal('prodModal');
 }
@@ -1600,6 +1681,13 @@ async function saveProd() {
     badge: document.getElementById('pBadge').value || null,
     emoji: document.getElementById('pEmoji').value.trim(),
     image_url: document.getElementById('pImgUrl').value || null,
+    niveau: document.getElementById('pNiveau').value || null,
+    forme: document.getElementById('pForme').value || null,
+    equilibre: document.getElementById('pEquilibre').value || null,
+    puissance: parseInt(document.getElementById('pPuissance').value) || 0,
+    controle: parseInt(document.getElementById('pControle').value) || 0,
+    points_forts: document.getElementById('pPointsForts').value.trim() || null,
+    ideal_pour: document.getElementById('pIdealPour').value.trim() || null,
   };
   try {
     if (editId) {
