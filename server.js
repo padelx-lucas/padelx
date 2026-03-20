@@ -450,6 +450,41 @@ app.get('/api/commandes', async (req, res) => {
   res.json(data);
 });
 
+// ══ PAGE 404 ══
+app.use((req, res) => {
+  res.status(404).send(`<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Page introuvable — PADEL X</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Inter:wght@400&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0a0a0a;font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;}
+.num{font-family:'Oswald',sans-serif;font-size:clamp(120px,25vw,200px);font-weight:700;line-height:1;color:rgba(255,255,255,.04);letter-spacing:-10px;margin-bottom:-40px;}
+.num em{font-style:normal;color:#D0021B;opacity:.3;}
+.logo{font-family:'Oswald',sans-serif;font-size:24px;font-weight:700;letter-spacing:4px;color:#fff;margin-bottom:24px;}
+.logo span{color:#D0021B;}
+h1{font-family:'Oswald',sans-serif;font-size:32px;font-weight:700;text-transform:uppercase;letter-spacing:-1px;color:#fff;margin-bottom:12px;}
+p{font-size:13px;color:rgba(255,255,255,.35);line-height:1.8;margin-bottom:32px;max-width:360px;}
+a{display:inline-block;background:#D0021B;color:#fff;padding:14px 36px;font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;margin:4px;transition:background .2s;}
+a:hover{background:#b0001a;}
+a.outline{background:none;border:1.5px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);}
+a.outline:hover{border-color:#fff;color:#fff;background:none;}
+</style>
+</head>
+<body>
+<div class="num">4<em>0</em>4</div>
+<div class="logo">PADEL<span>X</span></div>
+<h1>Page introuvable</h1>
+<p>Cette page n'existe pas ou a été déplacée. Retourne à la boutique pour découvrir notre sélection d'équipements padel.</p>
+<a href="/">← Retour à la boutique</a>
+<a href="/#prods" class="outline">Voir les produits</a>
+</body>
+</html>`);
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`PADEL X démarré port ${PORT}`);
