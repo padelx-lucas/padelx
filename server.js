@@ -237,7 +237,7 @@ app.get('/success', async (req, res) => {
           </tr>`).join('');
 
         await resend.emails.send({
-          from: 'Padel X <onboarding@resend.dev>',
+          from: 'Padel X <contact@padelx.fr>',
           to: clientEmail,
           subject: '✅ Commande confirmée — Padel X',
           html: `<!DOCTYPE html><html><head><meta charset="UTF-8"/></head><body style="margin:0;padding:0;background:#f5f4f0;font-family:Arial,sans-serif;">
