@@ -2057,6 +2057,76 @@ async function deletePack(id) {
 }
 
 
+// ══ COMMANDES ADMIN ══
+async function openCommandes() {
+  openModal('commandesModal');
+  await loadCommandes();
+}
+
+async function loadCommandes() {
+  const wrap = document.getElementById('commandesListWrap');
+  wrap.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);">Chargement...</div>';
+  try {
+    const data = await fetch('/api/commandes').then(r => r.json());
+    if (!data.length) {
+      wrap.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);">Aucune commande pour l\'instant.</div>';
+      return;
+    }
+    const statutColors = { 'confirmée': '#f5a623', 'en préparation': '#3498db', 'expédiée': '#9b59b6', 'livrée': '#27ae60' };
+    wrap.innerHTML = data.map(c => `
+      <div style="border:1px solid var(--border);padding:20px;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+          <div>
+            <div style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;margin-bottom:4px;">${c.client_nom || 'Client'}</div>
+            <div style="font-size:12px;color:var(--muted);">${c.client_email}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px;">${new Date(c.created_at).toLocaleDateString('fr-FR', {day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:var(--r);">${(c.montant_total||0).toFixed(2).replace('.',',')} €</div>
+            <span style="display:inline-block;background:${statutColors[c.statut]||'#888'};color:#fff;font-size:9px;letter-spacing:2px;padding:3px 10px;text-transform:uppercase;margin-top:4px;">${c.statut||'confirmée'}</span>
+          </div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <select onchange="updateStatut('${c.stripe_session_id}', this.value)" style="border:1.5px solid var(--border);padding:7px 10px;font-size:11px;outline:none;background:#fff;">
+            <option ${c.statut==='confirmée'?'selected':''} value="confirmée">Confirmée</option>
+            <option ${c.statut==='en préparation'?'selected':''} value="en préparation">En préparation</option>
+            <option ${c.statut==='expédiée'?'selected':''} value="expédiée">Expédiée</option>
+            <option ${c.statut==='livrée'?'selected':''} value="livrée">Livrée</option>
+          </select>
+          <input type="text" placeholder="Numéro de suivi" value="${c.numero_suivi||''}" id="suivi_${c.stripe_session_id}" style="border:1.5px solid var(--border);padding:7px 10px;font-size:11px;outline:none;flex:1;min-width:140px;"/>
+          <input type="text" placeholder="Transporteur (ex: Colissimo)" value="${c.transporteur||''}" id="transport_${c.stripe_session_id}" style="border:1.5px solid var(--border);padding:7px 10px;font-size:11px;outline:none;flex:1;min-width:140px;"/>
+          <button onclick="saveCommande('${c.stripe_session_id}')" style="background:var(--k);color:#fff;border:none;padding:8px 16px;font-size:10px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Sauvegarder</button>
+          <a href="/suivi?id=${c.stripe_session_id}" target="_blank" style="background:var(--g);border:1px solid var(--border);color:var(--k);padding:8px 12px;font-size:10px;letter-spacing:1px;text-transform:uppercase;text-decoration:none;">Voir suivi</a>
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    wrap.innerHTML = `<div style="text-align:center;padding:40px;color:var(--r);">Erreur : ${e.message}</div>`;
+  }
+}
+
+async function updateStatut(id, statut) {
+  const suivi = document.getElementById(`suivi_${id}`)?.value || '';
+  const transport = document.getElementById(`transport_${id}`)?.value || '';
+  await fetch(`/api/commandes/${id}`, {
+    method: 'PUT',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ statut, numero_suivi: suivi, transporteur: transport })
+  });
+  toast('Statut mis à jour ✓');
+}
+
+async function saveCommande(id) {
+  const statut = document.querySelector(`select[onchange*="${id}"]`)?.value || 'confirmée';
+  const suivi = document.getElementById(`suivi_${id}`)?.value || '';
+  const transport = document.getElementById(`transport_${id}`)?.value || '';
+  await fetch(`/api/commandes/${id}`, {
+    method: 'PUT',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ statut, numero_suivi: suivi, transporteur: transport })
+  });
+  toast('Commande mise à jour ✓');
+}
+
 // ══ ACTUS ══
 async function loadNews() {
   try {
@@ -2130,6 +2200,7 @@ async function delConseil(id) {
 
 document.getElementById('adminBar').querySelector('.admin-acts').innerHTML += `
   <button class="admin-act" onclick="openStripeConfig()" style="margin-left:8px">⚡ Config Stripe</button>
+  <button class="admin-act" onclick="openCommandes()">📦 Commandes</button>
   <button class="admin-act" onclick="genererActusNow()">🤖 Générer actus</button>
 `;
 
@@ -2177,7 +2248,25 @@ async function genererActusNow() {
   </div>
 </div>
 
+<!-- MODAL COMMANDES -->
+<div class="modal-bg" id="commandesModal">
+  <div class="modal" style="max-width:860px;padding:0;">
+    <button class="modal-x" onclick="closeModal('commandesModal')" style="top:12px;right:12px;z-index:10;">✕</button>
+    <div style="padding:28px 32px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div class="modal-label">Admin</div>
+        <h2 class="modal-title">Commandes</h2>
+      </div>
+      <button class="btn-red" onclick="loadCommandes()" style="padding:10px 20px;font-size:11px;">↻ Actualiser</button>
+    </div>
+    <div id="commandesListWrap" style="padding:24px;max-height:70vh;overflow-y:auto;">
+      <div style="text-align:center;padding:40px;color:var(--muted);">Chargement...</div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL PACK -->
+
 <div class="modal-bg" id="packModal">
   <div class="modal wide" style="max-width:560px;">
     <button class="modal-x" onclick="closeModal('packModal')">✕</button>
