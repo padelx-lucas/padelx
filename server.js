@@ -183,6 +183,7 @@ app.post('/create-checkout', async (req, res) => {
       payment_method_types: ['card'],
       mode: 'payment',
       locale: 'fr',
+      allow_promotion_codes: true,
       line_items: items.map(item => ({
         price_data: { currency: 'eur', product_data: { name: item.emoji + ' ' + item.name }, unit_amount: item.price },
         quantity: item.qty,
