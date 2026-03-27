@@ -236,74 +236,10 @@ nav{background:var(--w);border-bottom:1px solid var(--border);position:sticky;to
 /* ══════════════════════════════
    BRANDS
 ══════════════════════════════ */
-/* ══ PALETTE RETRAVAILLÉE ══ */
-:root {
-  --k: #0a0a0a;
-  --r: #D0021B;
-  --g: #f8f7f4;
-  --panel: #ffffff;
-  --border: #e8e6e1;
-  --muted: #8a8580;
-  --accent: #1a1a2e;
-}
-
-/* ══ MARQUES VISUELLES ══ */
-.brands-wrap{padding:80px 0;background:var(--g);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.brands-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
-.brand-card{background:#fff;padding:24px 16px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:all .25s;border:1px solid transparent;}
-.brand-card:hover{border-color:var(--r);transform:translateY(-3px);box-shadow:0 8px 24px rgba(208,2,27,.1);}
-.brand-card-logo{font-family:'Oswald',sans-serif;font-size:32px;font-weight:700;letter-spacing:2px;color:var(--k);line-height:1;}
-.brand-card-name{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--k);}
-.brand-card-tag{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
-.brand-card:hover .brand-card-logo{color:var(--r);}
-@media(max-width:768px){.brands-grid{grid-template-columns:repeat(4,1fr);}.brands-wrap{padding:48px 0;}}
-@media(max-width:480px){.brands-grid{grid-template-columns:repeat(3,1fr);}}
-
-/* ══ CARTES PRODUITS HOVER ══ */
-.pcard{transition:all .3s cubic-bezier(.16,1,.3,1);}
-.pcard:hover{transform:translateY(-4px);box-shadow:0 12px 36px rgba(0,0,0,.12);}
-.pcard-img{overflow:hidden;}
-.pcard-img img,.pcard-img-ico{transition:transform .4s cubic-bezier(.16,1,.3,1);}
-.pcard:hover .pcard-img img,.pcard:hover .pcard-img-ico{transform:scale(1.06);}
-.pcard-add{transition:all .2s cubic-bezier(.16,1,.3,1);}
-.pcard:hover .pcard-add{background:var(--r);}
-
-/* ══ FOOTER REDESIGNÉ ══ */
-footer{background:#0d0d0d;padding-top:0;}
-.footer-top-bar{background:var(--r);padding:16px 40px;}
-.footer-top-bar-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
-.footer-top-bar span{font-size:12px;letter-spacing:1px;color:rgba(255,255,255,.9);}
-.footer-top-bar strong{color:#fff;}
-.footer-inner{max-width:1400px;margin:0 auto;padding:48px 40px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;border-bottom:1px solid rgba(255,255,255,.06);}
-.footer-logo{font-family:'Oswald',sans-serif;font-size:40px;font-weight:700;letter-spacing:5px;color:#fff;margin-bottom:12px;}
-.footer-logo span{color:var(--r);}
-.footer-desc{font-size:13px;color:rgba(255,255,255,.3);line-height:1.8;margin-bottom:20px;}
-.footer-socs{display:flex;gap:8px;}
-.fsoc{width:36px;height:36px;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(255,255,255,.25);transition:.2s;cursor:pointer;letter-spacing:0;}
-.fsoc:hover{border-color:var(--r);color:#fff;background:var(--r);}
-.fcol-title{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.2);margin-bottom:20px;}
-.fcol ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
-.fcol ul li a{font-size:13px;color:rgba(255,255,255,.4);text-decoration:none;transition:color .2s;display:inline-block;}
-.fcol ul li a:hover{color:#fff;padding-left:4px;}
-.footer-bottom{max-width:1400px;margin:0 auto;padding:20px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
-.footer-copy{font-size:11px;letter-spacing:1px;color:rgba(255,255,255,.12);}
-.footer-pays{display:flex;gap:8px;}
-.fpay{border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.2);font-size:9px;letter-spacing:1px;padding:4px 10px;font-weight:700;}
-@media(max-width:768px){
-  .footer-top-bar{padding:12px 16px;}
-  .footer-inner{grid-template-columns:1fr;gap:32px;padding:32px 16px;}
-  .footer-bottom{padding:16px;flex-direction:column;text-align:center;}
-  .brands-grid{grid-template-columns:repeat(4,1fr);}
-}
-
-/* ══ ANIMATIONS SCROLL ══ */
-.reveal{opacity:0;transform:translateY(32px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1);}
-.reveal.in{opacity:1;transform:translateY(0);}
-.reveal-left{opacity:0;transform:translateX(-32px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1);}
-.reveal-left.in{opacity:1;transform:translateX(0);}
-.reveal-scale{opacity:0;transform:scale(.96);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1);}
-.reveal-scale.in{opacity:1;transform:scale(1);}
-</style>
+.brands-wrap{padding:48px 0;border-top:1px solid var(--border);}
+.brands-inner{max-width:1400px;margin:0 auto;padding:0 40px;display:flex;align-items:center;justify-content:space-between;}
+.brand-name{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;letter-spacing:3px;color:var(--border);text-transform:uppercase;transition:color .25s;cursor:default;}
+.brand-name:hover{color:var(--k);}
 
 /* ══════════════════════════════
    NEWSLETTER
@@ -593,20 +529,8 @@ footer{background:#050505;padding:60px 0 0;}
    PRODUCT DETAIL MODAL
 ══════════════════════════════ */
 .pd-grid{display:grid;grid-template-columns:1fr 1fr;}
-.pd-img{background:var(--g);display:flex;flex-direction:column;position:relative;overflow:hidden;}
-.pd-img-main{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:100px;position:relative;overflow:hidden;flex:1;}
-.pd-img-main img{width:100%;height:100%;object-fit:cover;transition:opacity .3s;}
-.pd-gallery-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:2;}
-.pd-gallery-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;transition:.2s;}
-.pd-gallery-dot.on{background:#fff;width:20px;border-radius:4px;}
-.pd-gallery-arrow{position:absolute;top:40%;transform:translateY(-50%);background:rgba(0,0,0,.4);color:#fff;border:none;width:32px;height:32px;font-size:16px;cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center;transition:.2s;}
-.pd-gallery-arrow:hover{background:var(--r);}
-.pd-gallery-arrow.prev{left:8px;}
-.pd-gallery-arrow.next{right:8px;}
-.pd-thumbs{display:flex;gap:4px;padding:8px;background:var(--g);flex-wrap:wrap;flex-shrink:0;}
-.pd-thumb{width:52px;height:52px;border:2px solid transparent;overflow:hidden;cursor:pointer;flex-shrink:0;}
-.pd-thumb.on{border-color:var(--r);}
-.pd-thumb img{width:100%;height:100%;object-fit:cover;}
+.pd-img{background:var(--g);aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:100px;position:relative;overflow:hidden;}
+.pd-img img{width:100%;height:100%;object-fit:cover;}
 .pd-info{padding:40px;display:flex;flex-direction:column;justify-content:space-between;overflow-y:auto;max-height:600px;}
 .pd-brand{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--r);margin-bottom:8px;}
 .pd-name{font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;text-transform:uppercase;letter-spacing:-1px;line-height:1.1;margin-bottom:16px;}
@@ -1189,51 +1113,17 @@ footer{background:#050505;padding:60px 0 0;}
 </section>
 
 <!-- BRANDS -->
-<section class="brands-wrap reveal">
-  <div class="section">
-    <div style="text-align:center;margin-bottom:40px;">
-      <div class="sec-tag" style="justify-content:center;">Nos partenaires officiels</div>
-      <h2 style="font-family:'Oswald',sans-serif;font-size:clamp(28px,5vw,42px);font-weight:700;text-transform:uppercase;letter-spacing:-1px;line-height:1;">LES MEILLEURES <span style="color:var(--r);">MARQUES</span></h2>
-    </div>
-    <div class="brands-grid">
-      <div class="brand-card" onclick="filter('all');goto('prods')">
-        <div class="brand-card-logo">BP</div>
-        <div class="brand-card-name">Bullpadel</div>
-        <div class="brand-card-tag">Espagne</div>
-      </div>
-      <div class="brand-card" onclick="filter('all');goto('prods')">
-        <div class="brand-card-logo" style="font-size:28px;letter-spacing:-2px;">HEAD</div>
-        <div class="brand-card-name">Head</div>
-        <div class="brand-card-tag">Autriche</div>
-      </div>
-      <div class="brand-card" onclick="filter('all');goto('prods')">
-        <div class="brand-card-logo" style="font-size:22px;">BAB</div>
-        <div class="brand-card-name">Babolat</div>
-        <div class="brand-card-tag">France</div>
-      </div>
-      <div class="brand-card" onclick="filter('all');goto('prods')">
-        <div class="brand-card-logo" style="font-size:22px;">WLS</div>
-        <div class="brand-card-name">Wilson</div>
-        <div class="brand-card-tag">USA</div>
-      </div>
-      <div class="brand-card" onclick="filter('all');goto('prods')">
-        <div class="brand-card-logo" style="font-size:30px;">NOX</div>
-        <div class="brand-card-name">Nox</div>
-        <div class="brand-card-tag">Espagne</div>
-      </div>
-      <div class="brand-card" onclick="filter('all');goto('prods')">
-        <div class="brand-card-logo" style="font-size:24px;">ADI</div>
-        <div class="brand-card-name">Adidas</div>
-        <div class="brand-card-tag">Allemagne</div>
-      </div>
-      <div class="brand-card" onclick="filter('all');goto('prods')">
-        <div class="brand-card-logo" style="font-size:26px;">SIUX</div>
-        <div class="brand-card-name">Siux</div>
-        <div class="brand-card-tag">Espagne</div>
-      </div>
-    </div>
+<div class="brands-wrap reveal">
+  <div class="brands-inner">
+    <div class="brand-name">BULLPADEL</div>
+    <div class="brand-name">HEAD</div>
+    <div class="brand-name">BABOLAT</div>
+    <div class="brand-name">WILSON</div>
+    <div class="brand-name">NOX</div>
+    <div class="brand-name">ADIDAS</div>
+    <div class="brand-name">SIUX</div>
   </div>
-</section>
+</div>
 
 <!-- NEWSLETTER -->
 <div class="nl-wrap reveal">
@@ -1284,65 +1174,19 @@ footer{background:#050505;padding:60px 0 0;}
 </section>
 
 <footer>
-  <!-- Barre rouge top footer -->
-  <div class="footer-top-bar">
-    <div class="footer-top-bar-inner">
-      <span>🚚 <strong>Livraison gratuite</strong> dès 79€ en France</span>
-      <span>↩️ <strong>30 jours</strong> pour changer d'avis</span>
-      <span>🔒 Paiement <strong>100% sécurisé</strong> via Stripe</span>
-      <span>🎾 <strong>7+ marques</strong> premium disponibles</span>
-    </div>
-  </div>
   <div class="footer-inner">
     <div>
       <div class="footer-logo">PADEL<span>X</span></div>
-      <p class="footer-desc">La boutique padel premium en France. Équipements, conseils et actualités pour progresser au padel.</p>
-      <div class="footer-socs">
-        <div class="fsoc">IG</div>
-        <div class="fsoc">FB</div>
-        <div class="fsoc">TK</div>
-        <div class="fsoc">YT</div>
-      </div>
+      <p class="footer-desc">La référence du matériel padel en France. Raquettes, tenues, chaussures et accessoires pour tous les niveaux.</p>
+      <div class="footer-socs"><div class="fsoc">IG</div><div class="fsoc">FB</div><div class="fsoc">TK</div><div class="fsoc">YT</div></div>
     </div>
-    <div class="fcol">
-      <div class="fcol-title">Boutique</div>
-      <ul>
-        <li><a href="#" onclick="filter('Raquettes');goto('prods');return false;">Raquettes</a></li>
-        <li><a href="#" onclick="filter('Chaussures');goto('prods');return false;">Chaussures</a></li>
-        <li><a href="#" onclick="filter('Tenues');goto('prods');return false;">Tenues</a></li>
-        <li><a href="#" onclick="filter('Balles');goto('prods');return false;">Balles</a></li>
-        <li><a href="#" onclick="filter('Sacs');goto('prods');return false;">Sacs</a></li>
-        <li><a href="#" onclick="goto('packs');return false;">Packs joueurs</a></li>
-      </ul>
-    </div>
-    <div class="fcol">
-      <div class="fcol-title">Infos</div>
-      <ul>
-        <li><a href="#" onclick="openModal('aboutModal');return false;">À propos</a></li>
-        <li><a href="#" onclick="goto('conseils');return false;">Conseils</a></li>
-        <li><a href="#" onclick="goto('actus');return false;">Actus padel</a></li>
-        <li><a href="/suivi">Suivi commande</a></li>
-      </ul>
-    </div>
-    <div class="fcol">
-      <div class="fcol-title">Service</div>
-      <ul>
-        <li><a href="#" onclick="openModal('contactModal');return false;">Contact</a></li>
-        <li><a href="#" onclick="openModal('mentionsModal');return false;">Mentions légales</a></li>
-        <li><a href="#" onclick="openModal('cgvModal');return false;">CGV</a></li>
-        <li><a href="#" onclick="openModal('privacyModal');return false;">Confidentialité</a></li>
-        <li><a href="#" onclick="openLogin();return false;">Connexion</a></li>
-      </ul>
-    </div>
+    <div class="fcol"><div class="fcol-title">Boutique</div><ul><li><a href="#">Raquettes</a></li><li><a href="#">Balles</a></li><li><a href="#">Chaussures</a></li><li><a href="#">Tenues</a></li><li><a href="#">Sacs</a></li></ul></div>
+    <div class="fcol"><div class="fcol-title">Infos</div><ul><li><a href="#" onclick="openModal('aboutModal');return false;">À propos</a></li><li><a href="#">Blog</a></li><li><a href="#">Guide tailles</a></li><li><a href="#">FAQ</a></li></ul></div>
+    <div class="fcol"><div class="fcol-title">Service</div><ul><li><a href="#">Livraison</a></li><li><a href="#">Retours</a></li><li><a href="#" onclick="openModal('contactModal');return false;">Contact</a></li><li><a href="#" onclick="openModal('mentionsModal');return false;">Mentions légales</a></li><li><a href="#" onclick="openModal('cgvModal');return false;">CGV</a></li><li><a href="#" onclick="openModal('privacyModal');return false;">Confidentialité</a></li><li><a href="#" onclick="openLogin();return false;">Connexion</a></li></ul></div>
   </div>
   <div class="footer-bottom">
-    <div class="footer-copy">© 2025 PADEL X — Tous droits réservés — padelx.fr</div>
-    <div class="footer-pays">
-      <div class="fpay">VISA</div>
-      <div class="fpay">MASTERCARD</div>
-      <div class="fpay">STRIPE</div>
-      <div class="fpay">AMEX</div>
-    </div>
+    <div class="footer-copy">© 2025 PADEL X — Tous droits réservés</div>
+    <div class="footer-pays"><div class="fpay">VISA</div><div class="fpay">MC</div><div class="fpay">STRIPE</div><div class="fpay">PAYPAL</div></div>
   </div>
 </footer>
 
@@ -1447,24 +1291,15 @@ footer{background:#050505;padding:60px 0 0;}
     <div class="mfield"><label>Points forts (séparés par des virgules)</label><input type="text" id="pPointsForts" placeholder="Puissance exceptionnelle, Idéale pour smash, Technologie pro"/></div>
     <div class="mfield"><label>Idéal pour</label><input type="text" id="pIdealPour" placeholder="Joueurs offensifs et compétiteurs"/></div>
     <div class="mfield">
-      <label>Images du produit</label>
-      <div id="imgGallery" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;"></div>
-      <input type="file" id="pImgFile" accept="image/*" onchange="previewImg(this)" style="display:none" multiple/>
-      <input type="hidden" id="pImgUrl" value=""/>
-      <input type="hidden" id="pImagesJson" value="[]"/>
-      <button type="button" onclick="document.getElementById('pImgFile').click()" style="width:100%;background:var(--g);border:1.5px dashed var(--border);padding:12px;font-size:12px;letter-spacing:1px;cursor:pointer;">📁 Ajouter des images (plusieurs possibles)</button>
-      <div id="imgUploadStatus" style="font-size:11px;color:var(--muted);margin-top:6px;"></div>
-    </div>
-    <div class="mfield">
-      <label>Position de l'image principale</label>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
-        <button type="button" onclick="setImgPosition('center')" id="pos_center" style="flex:1;padding:8px;font-size:11px;border:1.5px solid var(--k);background:var(--k);color:#fff;cursor:pointer;">⊙ Centre</button>
-        <button type="button" onclick="setImgPosition('top')" id="pos_top" style="flex:1;padding:8px;font-size:11px;border:1.5px solid var(--border);background:#fff;cursor:pointer;">⬆ Haut</button>
-        <button type="button" onclick="setImgPosition('bottom')" id="pos_bottom" style="flex:1;padding:8px;font-size:11px;border:1.5px solid var(--border);background:#fff;cursor:pointer;">⬇ Bas</button>
-        <button type="button" onclick="setImgPosition('left')" id="pos_left" style="flex:1;padding:8px;font-size:11px;border:1.5px solid var(--border);background:#fff;cursor:pointer;">⬅ Gauche</button>
-        <button type="button" onclick="setImgPosition('right')" id="pos_right" style="flex:1;padding:8px;font-size:11px;border:1.5px solid var(--border);background:#fff;cursor:pointer;">➡ Droite</button>
+      <label>Image du produit</label>
+      <div id="imgPreviewWrap" style="display:none;margin-bottom:10px;width:100%;height:180px;background:var(--g);position:relative;overflow:hidden;">
+        <img id="imgPreview" src="" style="width:100%;height:100%;object-fit:cover;"/>
+        <button type="button" onclick="clearImg()" style="position:absolute;top:6px;right:6px;background:var(--r);color:#fff;border:none;width:24px;height:24px;font-size:11px;cursor:pointer;">✕</button>
       </div>
-      <input type="hidden" id="pImgPosition" value="center"/>
+      <input type="file" id="pImgFile" accept="image/*" onchange="previewImg(this)" style="display:none"/>
+      <input type="hidden" id="pImgUrl" value=""/>
+      <button type="button" onclick="document.getElementById('pImgFile').click()" style="width:100%;background:var(--g);border:1.5px dashed var(--border);padding:12px;font-size:12px;letter-spacing:1px;cursor:pointer;">📁 Choisir une image</button>
+      <div id="imgUploadStatus" style="font-size:11px;color:var(--muted);margin-top:6px;"></div>
     </div>
     <div class="merr" id="pErr">Remplis les champs obligatoires.</div>
     <button class="btn-full" onclick="saveProd()">Enregistrer →</button>
@@ -1517,14 +1352,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadPacks();
   initPopup();
   const obs = new IntersectionObserver(entries =>
-    entries.forEach((e, i) => {
-      if(e.isIntersecting) {
-        setTimeout(() => e.target.classList.add('in'), i * 60);
-      }
-    }),
-    { threshold: 0.05 }
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); }),
+    { threshold: 0.07 }
   );
-  document.querySelectorAll('.reveal, .reveal-left, .reveal-scale').forEach(el => obs.observe(el));
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 });
 
 // ══ UTILS ══
@@ -1645,24 +1476,6 @@ function filter(cat) {
   renderProds();
 }
 
-// ══ GALERIE PRODUIT ══
-let pdCurrentImg = 0;
-function pdSetImg(imgs, pos, i) {
-  pdCurrentImg = i;
-  const main = document.getElementById('pdMainImg');
-  if (main) { main.src = imgs[i]; main.style.objectPosition = pos; }
-  imgs.forEach((_, j) => {
-    const dot = document.getElementById('pdDot'+j);
-    const thumb = document.getElementById('pdThumb'+j);
-    if (dot) dot.classList.toggle('on', j===i);
-    if (thumb) thumb.classList.toggle('on', j===i);
-  });
-}
-function pdGallery(imgs, pos, dir) {
-  const next = (pdCurrentImg + dir + imgs.length) % imgs.length;
-  pdSetImg(imgs, pos, next);
-}
-
 // ══ PRODUCT DETAIL ══
 function openProdDetail(id) {
   const p = products.find(x => x.id === id); if (!p) return;
@@ -1671,24 +1484,7 @@ function openProdDetail(id) {
   const avg = reviews.length ? Math.round(reviews.reduce((s,r) => s+r.rating, 0) / reviews.length) : 0;
   document.getElementById('pdGrid').innerHTML = `
     <div class="pd-img">
-      ${(() => {
-        const imgs = (p.images && p.images.length) ? p.images : (p.image_url ? [p.image_url] : []);
-        const pos = p.image_position || 'center';
-        if (!imgs.length) return `<div class="pd-img-main"><span>${p.emoji || EMOJIS[p.category] || '📦'}</span></div>`;
-        return `
-          <div class="pd-img-main" id="pdImgMain">
-            <img src="${imgs[0]}" alt="${p.name}" id="pdMainImg" style="object-position:${pos}"/>
-            ${imgs.length > 1 ? `
-              <button class="pd-gallery-arrow prev" onclick="pdGallery(${JSON.stringify(imgs).replace(/"/g,"'")}, '${pos}', -1)">‹</button>
-              <button class="pd-gallery-arrow next" onclick="pdGallery(${JSON.stringify(imgs).replace(/"/g,"'")}, '${pos}', 1)">›</button>
-              <div class="pd-gallery-dots">${imgs.map((_,i) => `<div class="pd-gallery-dot ${i===0?'on':''}" onclick="pdSetImg(${JSON.stringify(imgs).replace(/"/g,"'")}, '${pos}', ${i})" id="pdDot${i}"></div>`).join('')}</div>
-            ` : ''}
-          </div>
-          ${imgs.length > 1 ? `
-          <div class="pd-thumbs">
-            ${imgs.map((url, i) => `<div class="pd-thumb ${i===0?'on':''}" id="pdThumb${i}" onclick="pdSetImg(${JSON.stringify(imgs).replace(/"/g,"'")}, '${pos}', ${i})"><img src="${url}"/></div>`).join('')}
-          </div>` : ''}`;
-      })()}
+      ${p.image_url ? `<img src="${p.image_url}" alt="${p.name}"/>` : `<span>${p.emoji || EMOJIS[p.category] || '📦'}</span>`}
     </div>
     <div class="pd-info">
       <div>
@@ -1868,84 +1664,52 @@ function submitReview() {
   openProdDetail(currentReviewProdId);
 }
 
-// ══ IMAGE UPLOAD — Multi-images + Position ══
+
 const SUPABASE_URL = 'https://rxnqrhzojozyajxwpcss.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4bnFyaHpvam96eWFqeHdwY3NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwMzEyNjksImV4cCI6MjA4ODYwNzI2OX0.i3HvKBXfZ_Fz7KmcWZ-aakjBJN_52_dek_r9Eg7OMho';
 
-let uploadedImages = [];
-
-function renderGallery() {
-  const g = document.getElementById('imgGallery');
-  if (!g) return;
-  const pos = document.getElementById('pImgPosition')?.value || 'center';
-  if (!uploadedImages.length) { g.innerHTML = ''; return; }
-  g.innerHTML = uploadedImages.map((url, i) => `
-    <div style="position:relative;width:80px;height:80px;border:2px solid ${i===0?'var(--r)':'var(--border)'};overflow:hidden;flex-shrink:0;">
-      <img src="${url}" style="width:100%;height:100%;object-fit:cover;object-position:${pos}"/>
-      ${i===0?'<div style="position:absolute;bottom:0;left:0;right:0;background:var(--r);color:#fff;font-size:8px;letter-spacing:1px;text-align:center;padding:2px;">PRINCIPALE</div>':''}
-      <button type="button" onclick="removeImage(${i})" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;border:none;width:18px;height:18px;font-size:10px;cursor:pointer;">✕</button>
-      ${i>0?`<button type="button" onclick="setMainImage(${i})" style="position:absolute;bottom:2px;left:2px;background:rgba(0,0,0,.6);color:#fff;border:none;font-size:8px;cursor:pointer;padding:2px 4px;">⭐</button>`:''}
-    </div>`).join('');
-  document.getElementById('pImgUrl').value = uploadedImages[0] || '';
-  document.getElementById('pImagesJson').value = JSON.stringify(uploadedImages);
-}
-
-function removeImage(i) {
-  uploadedImages.splice(i, 1);
-  renderGallery();
-}
-
-function setMainImage(i) {
-  const main = uploadedImages.splice(i, 1)[0];
-  uploadedImages.unshift(main);
-  renderGallery();
-}
-
-function setImgPosition(pos) {
-  document.getElementById('pImgPosition').value = pos;
-  ['center','top','bottom','left','right'].forEach(p => {
-    const btn = document.getElementById('pos_'+p);
-    if (btn) {
-      btn.style.background = p === pos ? 'var(--k)' : '#fff';
-      btn.style.color = p === pos ? '#fff' : 'var(--k)';
-      btn.style.borderColor = p === pos ? 'var(--k)' : 'var(--border)';
-    }
-  });
-  renderGallery();
-}
-
 async function previewImg(input) {
-  const files = Array.from(input.files);
-  if (!files.length) return;
-  document.getElementById('imgUploadStatus').textContent = `Upload de ${files.length} image(s) en cours...`;
-  let done = 0;
-  for (const file of files) {
-    try {
-      const ext = file.name.split('.').pop();
-      const filename = `product_${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-      const res = await fetch(`${SUPABASE_URL}/storage/v1/object/images/${filename}`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${SUPABASE_ANON}`, 'Content-Type': file.type, 'x-upsert': 'true' },
-        body: file
-      });
-      if (res.ok) {
-        uploadedImages.push(`${SUPABASE_URL}/storage/v1/object/public/images/${filename}`);
-        done++;
-        document.getElementById('imgUploadStatus').textContent = `${done}/${files.length} image(s) uploadée(s)...`;
-      }
-    } catch(e) {}
+  const file = input.files[0]; if (!file) return;
+  // Aperçu local
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('imgPreview').src = e.target.result;
+    document.getElementById('imgPreviewWrap').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+  // Upload direct vers Supabase Storage
+  document.getElementById('imgUploadStatus').textContent = 'Upload en cours...';
+  document.getElementById('pImgUrl').value = '';
+  try {
+    const ext = file.name.split('.').pop();
+    const filename = `product_${Date.now()}.${ext}`;
+    const res = await fetch(`${SUPABASE_URL}/storage/v1/object/images/${filename}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_ANON}`,
+        'Content-Type': file.type,
+        'x-upsert': 'true'
+      },
+      body: file
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || res.status);
+    }
+    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/images/${filename}`;
+    document.getElementById('pImgUrl').value = publicUrl;
+    document.getElementById('imgUploadStatus').textContent = '✓ Image uploadée';
+  } catch(e) {
+    document.getElementById('imgUploadStatus').textContent = 'Erreur : ' + e.message;
   }
-  document.getElementById('imgUploadStatus').textContent = `✓ ${done} image(s) uploadée(s)`;
-  renderGallery();
 }
 
 function clearImg() {
-  uploadedImages = [];
   document.getElementById('pImgFile').value = '';
+  document.getElementById('imgPreview').src = '';
+  document.getElementById('imgPreviewWrap').style.display = 'none';
   document.getElementById('pImgUrl').value = '';
-  document.getElementById('pImagesJson').value = '[]';
   document.getElementById('imgUploadStatus').textContent = '';
-  renderGallery();
 }
 
 // ══ CRUD ══
@@ -1963,7 +1727,6 @@ function openAddProd() {
   document.getElementById('pControle').value = '0';
   document.getElementById('pErr').style.display = 'none';
   clearImg();
-  setImgPosition('center');
   openModal('prodModal');
 }
 function editProd(id) {
@@ -1987,11 +1750,6 @@ function editProd(id) {
   document.getElementById('pPointsForts').value = p.points_forts || '';
   document.getElementById('pIdealPour').value = p.ideal_pour || '';
   document.getElementById('pErr').style.display = 'none';
-  // Images existantes
-  uploadedImages = p.images && p.images.length ? [...p.images] : (p.image_url ? [p.image_url] : []);
-  document.getElementById('pImagesJson').value = JSON.stringify(uploadedImages);
-  setImgPosition(p.image_position || 'center');
-  renderGallery();
   openModal('prodModal');
 }
 async function saveProd() {
@@ -2008,9 +1766,7 @@ async function saveProd() {
     category: document.getElementById('pCat').value,
     badge: document.getElementById('pBadge').value || null,
     emoji: document.getElementById('pEmoji').value.trim(),
-    image_url: uploadedImages[0] || null,
-    images: uploadedImages,
-    image_position: document.getElementById('pImgPosition').value || 'center',
+    image_url: document.getElementById('pImgUrl').value || null,
     niveau: document.getElementById('pNiveau').value || null,
     forme: document.getElementById('pForme').value || null,
     equilibre: document.getElementById('pEquilibre').value || null,
