@@ -68,6 +68,68 @@ app.delete('/api/products/:id', async (req, res) => {
   res.json({ success: true });
 });
 
+// ══ IMPORT PRODUIT DEPUIS FOURNISSEUR ══
+app.post('/api/import-produit', async (req, res) => {
+  const { url } = req.body;
+  if (!url) return res.status(400).json({ error: 'URL manquante' });
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept-Language': 'fr-FR,fr;q=0.9'
+      }
+    });
+    const html = await response.text();
+
+    let nom = '', description = '', prix = 0, images = [], marque = '', categorie = 'Raquettes';
+
+    // Nom
+    const nomMatch = html.match(/"name"\s*:\s*"([^"]+)"/) ||
+                     html.match(/<h1[^>]*>([^<]{5,100})<\/h1>/i);
+    if (nomMatch) nom = nomMatch[1].trim();
+
+    // Prix
+    const prixMatch = html.match(/"price"\s*:\s*"?(\d+[\.,]\d+)"?/) ||
+                      html.match(/"price"\s*:\s*(\d+)/) ||
+                      html.match(/(\d+[,\.]\d+)\s*€/);
+    if (prixMatch) prix = parseFloat(prixMatch[1].replace(',', '.'));
+
+    // Images
+    const imgMatches = [...html.matchAll(/"(https:\/\/[^"]*\.(jpg|jpeg|png|webp))"/gi)];
+    const imgSet = new Set();
+    for (const m of imgMatches) {
+      if (!m[1].includes('thumb') && !m[1].includes('logo') && !m[1].includes('icon') && !m[1].includes('sprite')) {
+        imgSet.add(m[1]);
+        if (imgSet.size >= 5) break;
+      }
+    }
+    images = [...imgSet];
+
+    // Marque
+    const marqueMatch = html.match(/"brand"\s*:\s*\{[^}]*"name"\s*:\s*"([^"]+)"/) ||
+                        html.match(/"brand"\s*:\s*"([^"]+)"/);
+    if (marqueMatch) marque = marqueMatch[1].trim();
+
+    // Description
+    const descMatch = html.match(/"description"\s*:\s*"([^"]{20,500})"/) ||
+                      html.match(/<div[^>]*class="[^"]*description[^"]*"[^>]*>([\s\S]{20,400}?)<\/div>/i);
+    if (descMatch) description = descMatch[1].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 300);
+
+    // Catégorie auto
+    const u = url.toLowerCase();
+    if (u.includes('raquette') || u.includes('pala')) categorie = 'Raquettes';
+    else if (u.includes('chaussure') || u.includes('zapatilla')) categorie = 'Chaussures';
+    else if (u.includes('balle') || u.includes('pelota') || u.includes('ball')) categorie = 'Balles';
+    else if (u.includes('sac') || u.includes('bolsa') || u.includes('bag')) categorie = 'Sacs';
+    else if (u.includes('tenue') || u.includes('ropa') || u.includes('short') || u.includes('polo') || u.includes('camiseta')) categorie = 'Tenues';
+    else categorie = 'Accessoires';
+
+    res.json({ nom, description, prix, images, marque, categorie });
+  } catch(e) {
+    res.status(500).json({ error: 'Impossible d\'accéder à cette page : ' + e.message });
+  }
+});
+
 // PACKS
 app.get('/api/packs', async (req, res) => {
   const { data, error } = await supabase.from('packs').select('*').order('created_at', { ascending: true });
