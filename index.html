@@ -2380,6 +2380,121 @@ async function deletePack(id) {
 }
 
 
+// ══ IMPORT PRODUIT ══
+let importedImages = [];
+
+function openImport() {
+  document.getElementById('importUrl').value = '';
+  document.getElementById('importResult').style.display = 'none';
+  document.getElementById('importBtn').textContent = '🔍 Extraire les informations →';
+  openModal('importModal');
+}
+
+async function importProduit() {
+  const url = document.getElementById('importUrl').value.trim();
+  if (!url) { toast('Colle une URL d\'abord'); return; }
+  const btn = document.getElementById('importBtn');
+  btn.textContent = '⏳ Extraction en cours...';
+  btn.disabled = true;
+  try {
+    const res = await fetch('/api/import-produit', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ url })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+
+    // Remplir le formulaire
+    document.getElementById('imp_marque').value = data.marque || '';
+    document.getElementById('imp_nom').value = data.nom || '';
+    document.getElementById('imp_desc').value = data.description || '';
+    document.getElementById('imp_prix').value = data.prix || '';
+    document.getElementById('imp_cat').value = data.categorie || 'Raquettes';
+
+    // Images
+    importedImages = data.images || [];
+    const imgWrap = document.getElementById('imp_images');
+    if (importedImages.length) {
+      imgWrap.innerHTML = importedImages.map((url, i) => `
+        <div style="position:relative;width:80px;height:80px;border:2px solid ${i===0?'var(--r)':'var(--border)'};overflow:hidden;cursor:pointer;" onclick="toggleImportImg(${i}, this)">
+          <img src="${url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.display='none'"/>
+          <div id="imgcheck_${i}" style="position:absolute;top:2px;right:2px;background:${i===0?'var(--r)':'rgba(0,0,0,.3)'};color:#fff;width:18px;height:18px;font-size:10px;display:flex;align-items:center;justify-content:center;">${i===0?'✓':''}</div>
+        </div>`).join('');
+    } else {
+      imgWrap.innerHTML = '<div style="font-size:12px;color:var(--muted);">Aucune image trouvée — tu pourras en ajouter manuellement.</div>';
+    }
+
+    // Avertissements
+    const warn = document.getElementById('imp_warn');
+    const warns = [];
+    if (!data.nom) warns.push('⚠️ Nom non trouvé — remplis-le manuellement');
+    if (!data.prix) warns.push('⚠️ Prix non trouvé — remplis-le manuellement');
+    if (!data.marque) warns.push('⚠️ Marque non trouvée — remplis-la manuellement');
+    if (warns.length) { warn.innerHTML = warns.join('<br/>'); warn.style.display = 'block'; }
+    else warn.style.display = 'none';
+
+    document.getElementById('importResult').style.display = 'block';
+    toast('Informations extraites ✓');
+  } catch(e) {
+    toast('Erreur : ' + e.message);
+  }
+  btn.textContent = '🔍 Extraire les informations →';
+  btn.disabled = false;
+}
+
+function toggleImportImg(i, el) {
+  const check = document.getElementById('imgcheck_'+i);
+  const isSelected = check.textContent === '✓';
+  if (isSelected) {
+    check.textContent = '';
+    check.style.background = 'rgba(0,0,0,.3)';
+    el.style.borderColor = 'var(--border)';
+  } else {
+    check.textContent = '✓';
+    check.style.background = 'var(--r)';
+    el.style.borderColor = 'var(--r)';
+  }
+}
+
+async function validerImport() {
+  const nom = document.getElementById('imp_nom').value.trim();
+  const prix = document.getElementById('imp_prix').value;
+  if (!nom || !prix) { toast('Nom et prix obligatoires'); return; }
+
+  // Images sélectionnées (celles avec ✓)
+  const selectedImgs = importedImages.filter((_, i) => {
+    const check = document.getElementById('imgcheck_'+i);
+    return check && check.textContent === '✓';
+  });
+
+  const d = {
+    brand: document.getElementById('imp_marque').value.trim() || 'Padel Nuestro',
+    name: nom,
+    description: document.getElementById('imp_desc').value.trim(),
+    price: parseFloat(prix),
+    category: document.getElementById('imp_cat').value,
+    badge: document.getElementById('imp_badge').value || null,
+    image_url: selectedImgs[0] || null,
+    images: selectedImgs,
+    image_position: 'center',
+  };
+
+  try {
+    await fetch('/api/products', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(d)
+    });
+    await loadProducts();
+    closeModal('importModal');
+    goto('prods');
+    toast('Produit importé et ajouté ✓ 🎉');
+  } catch(e) {
+    toast('Erreur : ' + e.message);
+  }
+}
+
 // ══ COMMANDES ADMIN ══
 async function openCommandes() {
   openModal('commandesModal');
@@ -2568,6 +2683,7 @@ async function delConseil(id) {
 document.getElementById('adminBar').querySelector('.admin-acts').innerHTML += `
   <button class="admin-act" onclick="openStripeConfig()" style="margin-left:8px">⚡ Config Stripe</button>
   <button class="admin-act" onclick="openCommandes()">📦 Commandes</button>
+  <button class="admin-act" onclick="openImport()" style="background:var(--r);color:#fff;border-color:var(--r);">🔗 Importer produit</button>
   <button class="admin-act" onclick="genererActusNow()">🤖 Générer actus</button>
 `;
 
@@ -2612,6 +2728,54 @@ async function genererActusNow() {
     <div class="mfield"><label>Votre prénom</label><input type="text" id="reviewName" placeholder="Ex: Thomas"/></div>
     <div class="mfield"><label>Votre avis</label><textarea id="reviewText" placeholder="Partagez votre expérience avec ce produit..."></textarea></div>
     <button class="btn-full" onclick="submitReview()">Publier mon avis →</button>
+  </div>
+</div>
+
+<!-- MODAL IMPORT PRODUIT -->
+<div class="modal-bg" id="importModal">
+  <div class="modal" style="max-width:600px;">
+    <button class="modal-x" onclick="closeModal('importModal')">✕</button>
+    <div class="modal-label">🔗 Import automatique</div>
+    <h2 class="modal-title">Importer depuis Padel Nuestro</h2>
+    <p class="modal-sub">Colle l'URL d'un produit Padel Nuestro — les infos seront extraites automatiquement.</p>
+    <div class="mfield">
+      <label>URL du produit</label>
+      <input type="url" id="importUrl" placeholder="https://www.padelnuestro.com/fr/raquette-..."/>
+    </div>
+    <button class="btn-full" onclick="importProduit()" id="importBtn">🔍 Extraire les informations →</button>
+    <div id="importResult" style="margin-top:20px;display:none;">
+      <div style="border-top:1px solid var(--border);padding-top:20px;">
+        <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Informations extraites — vérifie et modifie si besoin</div>
+        <div class="mrow">
+          <div class="mfield"><label>Marque</label><input type="text" id="imp_marque"/></div>
+          <div class="mfield"><label>Catégorie</label>
+            <select id="imp_cat">
+              <option>Raquettes</option><option>Chaussures</option><option>Tenues</option>
+              <option>Balles</option><option>Sacs</option><option>Accessoires</option>
+            </select>
+          </div>
+        </div>
+        <div class="mfield"><label>Nom du produit</label><input type="text" id="imp_nom"/></div>
+        <div class="mfield"><label>Description</label><textarea id="imp_desc" rows="3"></textarea></div>
+        <div class="mrow">
+          <div class="mfield"><label>Prix (€)</label><input type="number" id="imp_prix"/></div>
+          <div class="mfield"><label>Badge</label>
+            <select id="imp_badge">
+              <option value="">Aucun</option>
+              <option value="new">Nouveau</option>
+              <option value="sale">Promo</option>
+              <option value="top">Top</option>
+            </select>
+          </div>
+        </div>
+        <div class="mfield">
+          <label>Images trouvées</label>
+          <div id="imp_images" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
+        </div>
+        <div id="imp_warn" style="display:none;background:#fff8e1;border-left:3px solid #f5a623;padding:12px;font-size:12px;color:#555;margin-bottom:16px;"></div>
+        <button class="btn-full" onclick="validerImport()" style="background:var(--r);">✅ Ajouter ce produit à la boutique →</button>
+      </div>
+    </div>
   </div>
 </div>
 
